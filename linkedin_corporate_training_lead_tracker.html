@@ -1,0 +1,3761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corporate Outreach Lead Flow | Solo Consultant CRM & Google Sheets</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- SheetJS for client-side Excel (.xlsx, .xls) and CSV parsing/generation -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.15s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 gap-2 sm:gap-4">
+        
+        <!-- Logo & Title -->
+        <div class="flex items-center space-x-2.5 sm:space-x-3 shrink-0">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-700 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-100">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center space-x-1.5 sm:space-x-2">
+              <h1 class="text-sm sm:text-base md:text-lg font-bold text-slate-900 leading-tight">LeadPulse</h1>
+              <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">Solo Operator</span>
+            </div>
+            <p class="text-[11px] text-slate-500 hidden md:block">Training Outreach & Pipeline CRM</p>
+          </div>
+        </div>
+
+        <!-- View Switcher Tabs -->
+        <div class="inline-flex items-center p-1 bg-slate-100 rounded-xl border border-slate-200 shrink-0">
+          <button id="navViewPipeline" class="px-2.5 sm:px-3 py-1.5 text-xs font-bold rounded-lg bg-white text-indigo-700 shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            <span class="hidden xs:inline">Pipeline</span>
+          </button>
+          <button id="navViewMaster" class="px-2.5 sm:px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 transition flex items-center gap-1.5 cursor-pointer">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            <span class="hidden xs:inline">Master</span><span class="hidden lg:inline"> Dropdowns</span>
+          </button>
+        </div>
+
+        <!-- Top Header Action Buttons -->
+        <div class="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+          
+          <!-- EMAIL DIGEST BUTTON (PROMINENT) -->
+          <button id="btnOpenEmailDigestModal" title="Send or schedule email digest of follow-ups due today" class="inline-flex items-center px-2.5 sm:px-3 py-2 text-xs font-bold rounded-lg transition shadow-xs cursor-pointer border bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100 relative">
+            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600 sm:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            <span class="hidden sm:inline">Email Due</span>
+            <span id="headerEmailBadge" class="ml-1 sm:ml-1.5 px-1.5 py-0.2 rounded-full text-[10px] font-extrabold bg-amber-500 text-white leading-tight">0</span>
+          </button>
+
+          <!-- Google Sheets Cloud Database Button -->
+          <button id="btnOpenSheetsModal" title="Manage Google Sheets Database Connection" class="inline-flex items-center px-2 sm:px-2.5 py-2 text-xs font-semibold rounded-lg transition shadow-xs cursor-pointer border bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100">
+            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-1.5 text-emerald-600" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H6v-2h6v2zm6-4H6v-2h12v2zm0-4H6V7h12v2z"/>
+            </svg>
+            <span id="headerSheetStatusText" class="hidden md:inline">Google Sheets</span>
+            <span id="sheetStatusDot" class="w-2 h-2 rounded-full bg-slate-400 ml-1 inline-block"></span>
+          </button>
+
+          <!-- Download Template Button -->
+          <button id="btnDownloadTemplate" title="Download Excel / CSV starter template with guidelines" class="inline-flex items-center px-2 sm:px-2.5 py-2 text-xs font-semibold rounded-lg text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition shadow-xs cursor-pointer">
+            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 sm:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <span class="hidden lg:inline">Template</span>
+          </button>
+
+          <!-- Upload / Import Button (Excel & CSV) -->
+          <button id="btnOpenImportModal" title="Import leads from Excel spreadsheet (.xlsx, .xls) or CSV" class="inline-flex items-center px-2 sm:px-2.5 py-2 text-xs font-semibold rounded-lg text-indigo-700 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 transition shadow-xs cursor-pointer">
+            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-1 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+            </svg>
+            <span>Import</span>
+          </button>
+
+          <!-- Export CSV Button -->
+          <button id="btnExportCsv" title="Export all leads to CSV" class="inline-flex items-center px-2 sm:px-2.5 py-2 text-xs font-semibold rounded-lg text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition shadow-xs cursor-pointer">
+            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-1 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+            <span class="hidden md:inline">Export</span>
+          </button>
+
+          <!-- Add Lead Button -->
+          <button id="btnOpenAddModal" class="inline-flex items-center px-2.5 sm:px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-sm shadow-indigo-200 cursor-pointer">
+            <svg class="w-4 h-4 sm:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            <span class="hidden xs:inline">Add Lead</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <div id="sheetsSyncBanner" class="hidden bg-emerald-50 border-b border-emerald-200 py-2 px-4 text-xs text-emerald-800">
+    <div class="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-2">
+        <span class="flex h-2 w-2 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        </span>
+        <span>Connected to Google Sheets: <strong id="bannerSheetName">Outreach Leads Sheet</strong></span>
+        <span class="text-slate-400">|</span>
+        <span id="bannerLastSyncText" class="text-emerald-700">Auto-sync active</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="btnManualSync" class="text-emerald-900 font-semibold hover:underline flex items-center gap-1 cursor-pointer">
+          <svg id="syncSpinIcon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          Sync Now
+        </button>
+        <a id="linkOpenConnectedSheet" href="#" target="_blank" class="text-emerald-700 hover:text-emerald-900 hover:underline flex items-center gap-0.5">
+          Open in Sheets ↗
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1">
+    
+    <div id="pipelineViewContainer" class="space-y-6">
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        
+        <!-- Follow-up Alert Card with Direct Email Action Button -->
+        <div id="metricFollowUpCard" class="bg-white rounded-xl p-4 border border-amber-200 hover:border-amber-400 bg-gradient-to-br from-amber-50/40 to-white shadow-xs transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wider text-amber-800 flex items-center gap-1.5 cursor-pointer" onclick="filterByDueFollowups()">
+                <span class="relative flex h-2.5 w-2.5">
+                  <span id="pingDot" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+                </span>
+                Follow-ups Due
+              </span>
+              <span class="p-1.5 rounded-lg bg-amber-100 text-amber-700">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </span>
+            </div>
+            <div class="mt-2 flex items-baseline justify-between">
+              <div id="statFollowupsDue" class="text-2xl sm:text-3xl font-extrabold text-amber-900 cursor-pointer" onclick="filterByDueFollowups()">0</div>
+              <span class="text-[11px] font-medium text-amber-700 bg-amber-100/70 px-2 py-0.5 rounded-full cursor-pointer" onclick="filterByDueFollowups()">Click to filter</span>
+            </div>
+          </div>
+          
+          <!-- Secondary Action: Email Me This List Button -->
+          <div class="mt-3 pt-2.5 border-t border-amber-100/80 flex items-center justify-between">
+            <button id="btnCardEmailDigest" type="button" class="w-full text-[11px] font-semibold text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-300 py-1 px-2 rounded-lg transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer">
+              <svg class="w-3.5 h-3.5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              <span>Email Due Today List</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Outreach in Motion -->
+        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">In Pipeline</span>
+              <span class="p-1.5 rounded-lg bg-blue-50 text-blue-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+              </span>
+            </div>
+            <div class="mt-2 flex items-baseline justify-between">
+              <div id="statInPipeline" class="text-2xl sm:text-3xl font-extrabold text-slate-900">0</div>
+              <span class="text-xs text-slate-500">Sent / Pending</span>
+            </div>
+          </div>
+          <div class="mt-3 pt-2 text-[11px] text-slate-400">
+            Active conversations
+          </div>
+        </div>
+
+        <!-- Responded / Warm Leads -->
+        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Responses</span>
+              <span class="p-1.5 rounded-lg bg-emerald-50 text-emerald-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+              </span>
+            </div>
+            <div class="mt-2 flex items-baseline justify-between">
+              <div id="statResponses" class="text-2xl sm:text-3xl font-extrabold text-slate-900">0</div>
+              <span id="statResponseRate" class="text-xs font-semibold text-emerald-600">0% reply rate</span>
+            </div>
+          </div>
+          <div class="mt-3 pt-2 text-[11px] text-slate-400">
+            Replied prospects
+          </div>
+        </div>
+
+        <!-- Won Deals -->
+        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Deals Won</span>
+              <span class="p-1.5 rounded-lg bg-indigo-50 text-indigo-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                </svg>
+              </span>
+            </div>
+            <div class="mt-2 flex items-baseline justify-between">
+              <div id="statWon" class="text-2xl sm:text-3xl font-extrabold text-indigo-600">0</div>
+              <span id="statTotal" class="text-xs text-slate-500">0 Total Leads</span>
+            </div>
+          </div>
+          <div class="mt-3 pt-2 text-[11px] text-slate-400">
+            Closed cohorts & contracts
+          </div>
+        </div>
+
+      </div>
+
+      <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+        
+        <!-- Top Filter Controls Bar -->
+        <div class="p-3.5 sm:p-4 border-b border-slate-200 bg-slate-50/70 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+          
+          <!-- Long Search Input -->
+          <div class="relative flex-1 min-w-0 max-w-2xl">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+            </div>
+            <input 
+              type="text" 
+              id="searchInput" 
+              placeholder="Search by prospect name, company, position, programme, source or next step..." 
+              class="block w-full h-10 pl-10 pr-16 text-xs sm:text-sm bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-slate-400 transition shadow-xs"
+            />
+            <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center gap-1">
+              <button id="clearSearchBtn" class="hidden text-slate-400 hover:text-slate-600 p-1 rounded transition cursor-pointer" title="Clear search">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+              <kbd class="hidden sm:inline-flex items-center px-1.5 py-0.5 border border-slate-200 rounded text-[10px] font-mono text-slate-400 bg-slate-50 select-none pointer-events-none">/</kbd>
+            </div>
+          </div>
+
+          <!-- Filter Dropdowns & Reset Button -->
+          <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 shrink-0">
+            
+            <!-- Lead Source Filter -->
+            <div class="relative min-w-[130px] sm:min-w-[140px] flex-1 sm:flex-initial">
+              <select id="filterSource" class="w-full h-10 appearance-none bg-white border border-slate-300 rounded-lg pl-3 pr-8 text-xs font-medium text-slate-700 shadow-xs hover:border-slate-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition cursor-pointer">
+                <option value="ALL">All Sources</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </div>
+
+            <!-- Target Programme Filter -->
+            <div class="relative min-w-[135px] sm:min-w-[145px] flex-1 sm:flex-initial">
+              <select id="filterProgramme" class="w-full h-10 appearance-none bg-white border border-slate-300 rounded-lg pl-3 pr-8 text-xs font-medium text-slate-700 shadow-xs hover:border-slate-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition cursor-pointer">
+                <option value="ALL">All Programmes</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </div>
+
+            <!-- Relevancy Filter -->
+            <div class="relative min-w-[120px] sm:min-w-[130px] flex-1 sm:flex-initial">
+              <select id="filterScore" class="w-full h-10 appearance-none bg-white border border-slate-300 rounded-lg pl-3 pr-8 text-xs font-medium text-slate-700 shadow-xs hover:border-slate-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition cursor-pointer">
+                <option value="ALL">All Scores</option>
+                <option value="5">★★★★★ (5 Stars)</option>
+                <option value="4">★★★★☆ (4+ Stars)</option>
+                <option value="3">★★★☆☆ (3+ Stars)</option>
+                <option value="2">★★☆☆☆ (2+ Stars)</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </div>
+
+            <!-- Reset Filter Button -->
+            <button id="btnResetFilters" title="Reset all filters" class="h-10 px-3 text-xs font-semibold text-slate-600 hover:text-indigo-700 hover:bg-white border border-slate-300 rounded-lg transition shadow-xs flex items-center justify-center gap-1 shrink-0 cursor-pointer">
+              <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+              <span>Reset</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Status Filter Tabs with Email Shortcut -->
+        <div class="px-4 py-2.5 bg-white flex items-center justify-between gap-2 overflow-x-auto text-xs font-medium border-t sm:border-t-0 border-slate-100">
+          <div class="flex items-center gap-1.5 shrink-0">
+            <span class="text-slate-400 uppercase tracking-wider text-[11px] font-semibold mr-1 shrink-0">Views:</span>
+            <button data-status-filter="ALL" class="status-tab-btn active px-3 py-1.5 rounded-full bg-slate-900 text-white transition shrink-0 cursor-pointer">All Leads</button>
+            <button data-status-filter="DUE" class="status-tab-btn px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 border border-amber-300 hover:bg-amber-100 transition shrink-0 flex items-center gap-1 cursor-pointer">
+              <span>⚠️ Follow-ups Due</span>
+              <span id="tabBadgeDueCount" class="bg-amber-500 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
+            </button>
+            <button data-status-filter="Initial Sent" class="status-tab-btn px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition shrink-0 cursor-pointer">Initial Sent</button>
+            <button data-status-filter="Follow-up Due" class="status-tab-btn px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition shrink-0 cursor-pointer">Follow-up Due</button>
+            <button data-status-filter="Follow-up Sent" class="status-tab-btn px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition shrink-0 cursor-pointer">Follow-up Sent</button>
+            <button data-status-filter="Responded" class="status-tab-btn px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition shrink-0 cursor-pointer">Responded</button>
+            <button data-status-filter="Won" class="status-tab-btn px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition shrink-0 cursor-pointer">Won 🏆</button>
+            <button data-status-filter="Identified" class="status-tab-btn px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition shrink-0 cursor-pointer">Identified</button>
+          </div>
+
+          <!-- Quick Action in View Bar: Dispatch Email -->
+          <div class="shrink-0 hidden md:block">
+            <button id="btnBarEmailDigest" type="button" class="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 transition cursor-pointer">
+              <svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              <span>Email Due List</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+        
+        <!-- Table Header & Lead Count -->
+        <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between text-xs text-slate-500 bg-slate-50/50">
+          <div>
+            Showing <span id="visibleLeadCount" class="font-bold text-slate-800">0</span> leads 
+            <span id="filterDescription" class="text-slate-400"></span>
+          </div>
+          <div class="text-[11px] text-slate-400 flex items-center gap-3">
+            <span id="dbSourceBadge" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600">
+              Storage: Local Cache
+            </span>
+            <button id="btnSeedSample" class="text-indigo-600 hover:underline cursor-pointer">Sample Data</button>
+          </div>
+        </div>
+
+        <!-- Main Responsive Table -->
+        <div class="overflow-x-auto w-full">
+          <table class="min-w-full divide-y divide-slate-200 text-left text-xs">
+            <thead class="bg-slate-50 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
+              <tr>
+                <th scope="col" class="py-3 px-4 w-64">Prospect & Company</th>
+                <th scope="col" class="py-3 px-3 w-36">Source</th>
+                <th scope="col" class="py-3 px-3 w-44">Programme & Score</th>
+                <th scope="col" class="py-3 px-3 w-40">Outreach Dates</th>
+                <th scope="col" class="py-3 px-3 w-32">Status</th>
+                <th scope="col" class="py-3 px-3 w-24 text-center">Replied?</th>
+                <th scope="col" class="py-3 px-3 w-56">Next Step & Notes</th>
+                <th scope="col" class="py-3 px-4 text-right w-36">Quick Actions</th>
+              </tr>
+            </thead>
+            <tbody id="leadTableBody" class="divide-y divide-slate-100 bg-white">
+              <!-- Populated dynamically via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty State Container -->
+        <div id="emptyState" class="hidden py-16 px-4 text-center">
+          <div class="w-16 h-16 mx-auto mb-3 text-slate-300">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+          </div>
+          <h3 class="text-sm font-semibold text-slate-800">No leads found</h3>
+          <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">No records match your active search or filter criteria. Add a new prospect, import from Excel, or sync with your Google Sheet.</p>
+          <div class="mt-4 flex items-center justify-center gap-2">
+            <button id="btnClearFiltersInEmpty" class="px-3 py-1.5 text-xs rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 transition cursor-pointer">Clear Filters</button>
+            <button id="btnEmptyConnectSheets" class="px-3 py-1.5 text-xs rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-800 font-medium hover:bg-emerald-100 transition cursor-pointer">Sync Google Sheet</button>
+            <button id="btnEmptyAddLead" class="px-3 py-1.5 text-xs rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition cursor-pointer">+ Add New Lead</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div id="masterDataViewContainer" class="hidden space-y-6">
+      
+      <!-- Master View Header Banner -->
+      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-900">Master Dropdowns & Lead Sources</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Customize options across all CRM selectors, filters, and auto-complete suggestions. Sorted alphabetically.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button id="btnRestoreMasterDefaults" class="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition cursor-pointer">
+            Restore Defaults
+          </button>
+          <button id="btnBackToPipeline" class="px-3.5 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs transition cursor-pointer">
+            ← Back to Pipeline
+          </button>
+        </div>
+      </div>
+
+      <!-- 6 Master Categories Grid (Titles, Sources, Programmes, Statuses, Positions, Next Actions) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        
+        <!-- 1. Titles / Honorifics -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-4 flex flex-col h-full">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+            <div class="flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-md bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold">1</span>
+              <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Titles / Salutations</h3>
+            </div>
+            <span id="badgeCountTitle" class="text-[11px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">0</span>
+          </div>
+          <form id="formAddMasterTitle" class="flex gap-1.5 mb-3">
+            <input type="text" id="inputNewMasterTitle" placeholder="Add title (e.g. Sir, Lord)..." required class="flex-1 text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-1 focus:ring-indigo-500">
+            <button type="submit" class="text-xs font-semibold px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition shrink-0 cursor-pointer">+</button>
+          </form>
+          <div id="masterListTitle" class="space-y-1.5 flex-1 overflow-y-auto max-h-[340px] pr-1"></div>
+        </div>
+
+        <!-- 2. Lead Sources -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-4 flex flex-col h-full">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+            <div class="flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-md bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">2</span>
+              <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Lead Sources</h3>
+            </div>
+            <span id="badgeCountSource" class="text-[11px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">0</span>
+          </div>
+          <form id="formAddMasterSource" class="flex gap-1.5 mb-3">
+            <input type="text" id="inputNewMasterSource" placeholder="Add source..." required class="flex-1 text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-1 focus:ring-indigo-500">
+            <button type="submit" class="text-xs font-semibold px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition shrink-0 cursor-pointer">+</button>
+          </form>
+          <div id="masterListSource" class="space-y-1.5 flex-1 overflow-y-auto max-h-[340px] pr-1"></div>
+        </div>
+
+        <!-- 3. Target Programmes -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-4 flex flex-col h-full">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+            <div class="flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-md bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold">3</span>
+              <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Programmes</h3>
+            </div>
+            <span id="badgeCountProgramme" class="text-[11px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">0</span>
+          </div>
+          <form id="formAddMasterProgramme" class="flex gap-1.5 mb-3">
+            <input type="text" id="inputNewMasterProgramme" placeholder="Add programme..." required class="flex-1 text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-1 focus:ring-indigo-500">
+            <button type="submit" class="text-xs font-semibold px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition shrink-0 cursor-pointer">+</button>
+          </form>
+          <div id="masterListProgramme" class="space-y-1.5 flex-1 overflow-y-auto max-h-[340px] pr-1"></div>
+        </div>
+
+        <!-- 4. Lead Statuses -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-4 flex flex-col h-full">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+            <div class="flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-md bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">4</span>
+              <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Lead Statuses</h3>
+            </div>
+            <span id="badgeCountStatus" class="text-[11px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">0</span>
+          </div>
+          <form id="formAddMasterStatus" class="flex gap-1.5 mb-3">
+            <input type="text" id="inputNewMasterStatus" placeholder="Add status..." required class="flex-1 text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-1 focus:ring-indigo-500">
+            <button type="submit" class="text-xs font-semibold px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition shrink-0 cursor-pointer">+</button>
+          </form>
+          <div id="masterListStatus" class="space-y-1.5 flex-1 overflow-y-auto max-h-[340px] pr-1"></div>
+        </div>
+
+        <!-- 5. Position Suggestions -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-4 flex flex-col h-full">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+            <div class="flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-md bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-bold">5</span>
+              <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Position Suggestions</h3>
+            </div>
+            <span id="badgeCountRole" class="text-[11px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">0</span>
+          </div>
+          <form id="formAddMasterRole" class="flex gap-1.5 mb-3">
+            <input type="text" id="inputNewMasterRole" placeholder="Add position title..." required class="flex-1 text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-1 focus:ring-indigo-500">
+            <button type="submit" class="text-xs font-semibold px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition shrink-0 cursor-pointer">+</button>
+          </form>
+          <div id="masterListRole" class="space-y-1.5 flex-1 overflow-y-auto max-h-[340px] pr-1"></div>
+        </div>
+
+        <!-- 6. Next Actions Suggestions -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-4 flex flex-col h-full">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+            <div class="flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-md bg-teal-100 text-teal-700 flex items-center justify-center text-xs font-bold">6</span>
+              <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Next Actions</h3>
+            </div>
+            <span id="badgeCountNextAction" class="text-[11px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">0</span>
+          </div>
+          <form id="formAddMasterNextAction" class="flex gap-1.5 mb-3">
+            <input type="text" id="inputNewMasterNextAction" placeholder="Add next action..." required class="flex-1 text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg focus:ring-1 focus:ring-indigo-500">
+            <button type="submit" class="text-xs font-semibold px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition shrink-0 cursor-pointer">+</button>
+          </form>
+          <div id="masterListNextAction" class="space-y-1.5 flex-1 overflow-y-auto max-h-[340px] pr-1"></div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <div id="emailDigestModal" class="fixed inset-0 z-50 overflow-y-auto hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl animate-fade-in border border-slate-100 my-8">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-slate-900">Email Follow-ups Due Digest</h2>
+            <p class="text-xs text-slate-500">Send an immediate summary to your inbox or configure daily auto-briefings</p>
+          </div>
+        </div>
+        <button id="btnCloseEmailDigestModal" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        
+        <!-- Recipient Email Input -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1" for="inputDigestRecipientEmail">
+            Your Email Address <span class="text-amber-600">*</span>
+          </label>
+          <input 
+            type="email" 
+            id="inputDigestRecipientEmail" 
+            placeholder="consultant@yourfirm.com" 
+            class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+          >
+          <p class="text-[11px] text-slate-400 mt-1">This email address will be saved locally so you don't have to retype it.</p>
+        </div>
+
+        <!-- Follow-ups Due List Preview Card -->
+        <div class="border border-slate-200 rounded-xl p-3.5 bg-slate-50/70">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <span id="digestDueCountBadge" class="w-5 h-5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold flex items-center justify-center">0</span>
+              Leads Requiring Outreach Today / Overdue
+            </span>
+            <span class="text-[11px] text-slate-400 font-mono" id="digestTodayDate"></span>
+          </div>
+
+          <div id="digestDuePreviewList" class="space-y-2 max-h-48 overflow-y-auto pr-1 text-xs">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+
+        <!-- Daily Automated Google Trigger Instructions Accordion -->
+        <div class="bg-indigo-50/60 border border-indigo-200 rounded-xl p-3 text-xs text-indigo-950 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-indigo-900 flex items-center gap-1">
+              <span>⏰ Want This Automatically Every Morning at 8:00 AM?</span>
+            </span>
+            <span class="text-[10px] bg-indigo-200 text-indigo-800 px-1.5 py-0.2 rounded font-semibold">Zero-Maintenance</span>
+          </div>
+          <p class="text-[11px] text-indigo-800 leading-relaxed">
+            In your connected Google Sheet, go to <strong>Extensions &rarr; Apps Script &rarr; Triggers (alarm clock icon on left)</strong>. Click <strong>Add Trigger</strong>, pick <code>sendDailyFollowupDigest</code>, set event source to <strong>Time-driven &rarr; Day timer &rarr; 7am to 8am</strong>. Google Sheets will email you automatically every morning!
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-between pt-4 mt-5 border-t border-slate-100 flex-wrap gap-2">
+        <button type="button" id="btnCancelEmailDigest" class="px-3 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition cursor-pointer">
+          Close
+        </button>
+
+        <div class="flex items-center space-x-2">
+          <!-- Fallback Native Email Client -->
+          <button type="button" id="btnOpenMailtoDigest" class="px-3 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg transition cursor-pointer flex items-center gap-1" title="Open in your default email client (Outlook, Apple Mail, etc.)">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            <span>Open in Mail App</span>
+          </button>
+
+          <!-- Primary Direct Send via Apps Script / Google Sheets -->
+          <button type="button" id="btnSendDigestNow" class="px-4 py-2 text-xs font-semibold text-white bg-amber-600 hover:bg-amber-700 rounded-lg transition shadow-xs cursor-pointer flex items-center gap-1.5">
+            <svg id="sendDigestIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+            </svg>
+            <span>Send Email Now</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="sheetsModal" class="fixed inset-0 z-50 overflow-y-auto hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl animate-fade-in border border-slate-100 my-8">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H6v-2h6v2zm6-4H6v-2h12v2zm0-4H6V7h12v2z"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-slate-900">Google Sheets Live Backend</h2>
+            <p class="text-xs text-slate-500">Manage, view, and back up all leads directly in your own Google Sheet</p>
+          </div>
+        </div>
+        <button id="btnCloseSheetsModal" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        
+        <!-- Quick 3-Step Setup Guide -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs text-slate-700 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-900 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px] font-extrabold">i</span>
+              Zero-Code Setup (Takes 2 minutes)
+            </span>
+            <a href="https://sheets.new" target="_blank" class="text-indigo-600 hover:underline font-semibold flex items-center gap-1">
+              Create New Google Sheet ↗
+            </a>
+          </div>
+
+          <ol class="list-decimal list-inside space-y-2 text-slate-600 leading-relaxed">
+            <li>Open your Google Sheet, click <strong class="text-slate-900">Extensions</strong> &rarr; <strong class="text-slate-900">Apps Script</strong>.</li>
+            <li>Replace any code with the script below and click <strong class="text-slate-900">Deploy</strong> &rarr; <strong class="text-slate-900">New deployment</strong>.</li>
+            <li>Select type <strong class="text-slate-900">Web app</strong>, choose <em>Execute as: Me</em> and <em>Who has access: Anyone</em>, then copy the generated <strong>Web app URL</strong>.</li>
+          </ol>
+
+          <!-- Apps Script Code Box with Copy Button (Includes Email Digest dispatch function) -->
+          <div class="relative bg-slate-900 text-slate-200 p-3 rounded-lg font-mono text-[11px] overflow-x-auto max-h-40">
+            <button id="btnCopyAppsScript" type="button" class="absolute top-2 right-2 px-2.5 py-1 rounded bg-indigo-600 hover:bg-indigo-700 text-white font-sans text-xs font-semibold shadow-xs transition cursor-pointer">
+              Copy Script
+            </button>
+            <pre id="appsScriptCodeBlock"><code>function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return ContentService.createTextOutput(JSON.stringify({status:'success', data:[]})).setMimeType(ContentService.MimeType.JSON);
+  var headers = data[0], rows = [];
+  for (var i = 1; i < data.length; i++) {
+    var r = {}; for (var j = 0; j < headers.length; j++) r[headers[j]] = data[i][j];
+    rows.push(r);
+  }
+  return ContentService.createTextOutput(JSON.stringify({status:'success', data:rows})).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  try {
+    var payload = JSON.parse(e.postData.contents);
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    
+    if (payload.action === 'sync_all') {
+      sheet.clearContents();
+      var headers = ['id','title','fullName','firstName','lastName','position','company','source','linkedinUrl','targetProgrammes','relevancyScore','status','initialDate','dueDate','responseReceived','nextStep','responseNotes'];
+      sheet.appendRow(headers);
+      var list = payload.leads || [];
+      for (var i = 0; i < list.length; i++) {
+        var l = list[i];
+        sheet.appendRow([l.id||'', l.title||'', l.fullName||'', l.firstName||'', l.lastName||'', l.position||l.role||'', l.company||'', l.source||'', l.linkedinUrl||'', Array.isArray(l.targetProgrammes)?l.targetProgrammes.join('; '):(l.targetProgrammes||''), l.relevancyScore||3, l.status||'Identified', l.initialDate||'', l.dueDate||'', l.responseReceived?true:false, l.nextStep||'', l.responseNotes||'']);
+      }
+      return ContentService.createTextOutput(JSON.stringify({status:'success', count:list.length})).setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    if (payload.action === 'send_digest') {
+      var recipient = payload.recipientEmail;
+      var dueLeads = payload.dueLeads || [];
+      if (!recipient) return ContentService.createTextOutput(JSON.stringify({status:'error', message:'No recipient email provided'})).setMimeType(ContentService.MimeType.JSON);
+      
+      var html = '<div style="font-family:sans-serif; max-width:650px; margin:auto; padding:20px; border:1px solid #e2e8f0; border-radius:12px;">';
+      html += '<h2 style="color:#0f172a; margin-top:0;">⚠️ Follow-ups Due Today (' + dueLeads.length + ')</h2>';
+      html += '<p style="color:#475569; font-size:14px;">Here are your LinkedIn corporate training outreach prospects requiring follow-up today:</p>';
+      
+      if (dueLeads.length === 0) {
+        html += '<p style="color:#16a34a; font-weight:bold;">🎉 All caught up! No follow-ups currently due.</p>';
+      } else {
+        html += '<table style="width:100%; border-collapse:collapse; font-size:13px; margin-top:12px;">';
+        html += '<tr style="background:#f8fafc; text-align:left; border-bottom:2px solid #cbd5e1;"><th style="padding:8px;">Prospect</th><th style="padding:8px;">Company & Position</th><th style="padding:8px;">Due Date</th><th style="padding:8px;">Next Step</th></tr>';
+        for (var k = 0; k < dueLeads.length; k++) {
+          var ld = dueLeads[k];
+          html += '<tr style="border-bottom:1px solid #e2e8f0;">';
+          html += '<td style="padding:8px; font-weight:bold;">' + (ld.title ? ld.title + ' ' : '') + (ld.fullName || ld.firstName) + '<br><a href="' + (ld.linkedinUrl||'#') + '" style="color:#2563eb; font-size:11px; text-decoration:none;">LinkedIn ↗</a></td>';
+          html += '<td style="padding:8px;">' + (ld.company||'') + '<br><span style="color:#64748b; font-size:11px;">' + (ld.position||ld.role||'') + '</span></td>';
+          html += '<td style="padding:8px; color:#b45309; font-weight:bold;">' + (ld.dueDate||'') + '</td>';
+          html += '<td style="padding:8px; color:#1e293b;">' + (ld.nextStep||'Follow up') + '</td>';
+          html += '</tr>';
+        }
+        html += '</table>';
+      }
+      html += '<p style="margin-top:20px; font-size:11px; color:#94a3b8;">Generated by LeadPulse Pipeline Tracker</p></div>';
+      
+      MailApp.sendEmail({
+        to: recipient,
+        subject: '📋 LinkedIn Outreach: ' + dueLeads.length + ' Follow-up(s) Due Today',
+        htmlBody: html
+      });
+      return ContentService.createTextOutput(JSON.stringify({status:'success', message:'Email digest sent successfully'})).setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify({status:'error', message:'Invalid action'})).setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({status:'error', message:err.toString()})).setMimeType(ContentService.MimeType.JSON);
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <!-- Connection Settings Input Fields -->
+        <div class="space-y-3 pt-1">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" for="inputSheetsWebAppUrl">
+              Google Apps Script Web App URL <span class="text-rose-500">*</span>
+            </label>
+            <input 
+              type="url" 
+              id="inputSheetsWebAppUrl" 
+              placeholder="https://script.google.com/macros/s/AKfycbx.../exec" 
+              class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-mono"
+            >
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" for="inputSheetsDocUrl">
+              Google Sheet Spreadsheet URL <span class="text-slate-400 font-normal">(Optional, for 1-click open)</span>
+            </label>
+            <input 
+              type="url" 
+              id="inputSheetsDocUrl" 
+              placeholder="https://docs.google.com/spreadsheets/d/your-sheet-id/edit" 
+              class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            >
+          </div>
+
+          <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+            <div>
+              <span class="font-semibold text-slate-800">Auto-sync every action</span>
+              <p class="text-[11px] text-slate-500">Automatically push additions, status changes, and quick actions to Google Sheets</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="chkAutoSyncSheets" checked class="sr-only peer">
+              <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-between pt-4 mt-5 border-t border-slate-100">
+        <div>
+          <button type="button" id="btnDisconnectSheets" class="hidden text-xs text-rose-600 hover:text-rose-800 font-semibold cursor-pointer">
+            Disconnect Sheet
+          </button>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button type="button" id="btnCancelSheetsModal" class="px-4 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition cursor-pointer">
+            Close
+          </button>
+          <button type="button" id="btnTestPullSheets" class="px-3.5 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg transition cursor-pointer">
+            Pull from Sheet
+          </button>
+          <button type="button" id="btnSaveAndPushSheets" class="px-4 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition shadow-xs cursor-pointer">
+            Connect & Push Leads
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="importModal" class="fixed inset-0 z-50 overflow-y-auto hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl animate-fade-in border border-slate-100 my-8">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+            <span class="p-1.5 rounded-lg bg-indigo-50 text-indigo-600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+              </svg>
+            </span>
+            Import Leads from Excel / CSV
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">Upload a spreadsheet (.xlsx, .xls, or .csv) to populate your pipeline.</p>
+        </div>
+        <button id="btnCloseImportModal" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Drag & Drop Upload Zone -->
+      <div class="space-y-4">
+        
+        <div 
+          id="dropZone" 
+          class="border-2 border-dashed border-slate-300 hover:border-indigo-500 rounded-xl p-6 text-center bg-slate-50/60 hover:bg-indigo-50/30 transition cursor-pointer group"
+        >
+          <input type="file" id="fileImportInput" accept=".xlsx,.xls,.csv" class="hidden">
+          <div class="w-12 h-12 rounded-xl bg-white border border-slate-200 text-indigo-600 flex items-center justify-center mx-auto mb-2 shadow-xs group-hover:scale-105 transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+            </svg>
+          </div>
+          <p class="text-xs sm:text-sm font-semibold text-slate-800">
+            Click to browse or drag & drop spreadsheet
+          </p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Supports Microsoft Excel (.xlsx, .xls) and CSV (.csv)</p>
+        </div>
+
+        <!-- Selected File Status Preview Card -->
+        <div id="importFileDetails" class="hidden p-3 bg-indigo-50/70 border border-indigo-100 rounded-xl flex items-center justify-between">
+          <div class="flex items-center space-x-3 overflow-hidden">
+            <span class="p-2 bg-indigo-600 text-white rounded-lg text-xs font-bold">XLS</span>
+            <div class="truncate">
+              <p id="importFileName" class="text-xs font-bold text-slate-900 truncate">prospects.xlsx</p>
+              <p id="importFileStats" class="text-[11px] text-slate-500">0 leads detected</p>
+            </div>
+          </div>
+          <button id="btnRemoveImportFile" class="text-xs text-rose-600 hover:underline shrink-0 ml-2 cursor-pointer">Change</button>
+        </div>
+
+        <!-- Import Strategy Selection -->
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+          <label class="block text-xs font-semibold text-slate-700 mb-1.5">Import Mode</label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center p-2 rounded-lg border border-slate-300 bg-white cursor-pointer hover:bg-slate-50">
+              <input type="radio" name="importMode" value="append" checked class="w-3.5 h-3.5 text-indigo-600 border-slate-300 focus:ring-indigo-500">
+              <span class="ml-2 text-xs font-medium text-slate-800">Append to Current</span>
+            </label>
+            <label class="flex items-center p-2 rounded-lg border border-slate-300 bg-white cursor-pointer hover:bg-slate-50">
+              <input type="radio" name="importMode" value="replace" class="w-3.5 h-3.5 text-indigo-600 border-slate-300 focus:ring-indigo-500">
+              <span class="ml-2 text-xs font-medium text-slate-800">Replace Database</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Template Download Link -->
+        <div class="flex items-center justify-between p-3 bg-amber-50/60 border border-amber-200 rounded-xl text-xs">
+          <div class="flex items-center space-x-2 text-amber-900">
+            <svg class="w-4 h-4 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>Need a formatted file with sample columns?</span>
+          </div>
+          <button id="btnDownloadTemplateInModal" type="button" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 underline shrink-0 cursor-pointer">
+            Get Template
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-end space-x-2.5 pt-4 mt-5 border-t border-slate-100">
+        <button type="button" id="btnCancelImportModal" class="px-4 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition cursor-pointer">
+          Cancel
+        </button>
+        <button type="button" id="btnExecuteImport" disabled class="px-4 py-2 text-xs font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm cursor-pointer">
+          Confirm Import
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="leadModal" class="fixed inset-0 z-50 overflow-y-auto hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl animate-fade-in border border-slate-100 my-8">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
+        <div>
+          <h2 id="modalTitle" class="text-lg font-bold text-slate-900">Add New Prospect</h2>
+          <p class="text-xs text-slate-500">Capture corporate training outreach touchpoint</p>
+        </div>
+        <button id="btnCloseModal" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <form id="leadForm" class="space-y-4">
+        <input type="hidden" id="formLeadId" value="">
+
+        <!-- Title & Full Name Row (Title is dynamically populated from Master) -->
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <div class="sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1" for="personTitle">Title</label>
+            <select id="personTitle" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+              <!-- Populated dynamically from Master Titles -->
+            </select>
+          </div>
+          <div class="sm:col-span-3">
+            <label class="block text-xs font-semibold text-slate-700 mb-1" for="fullName">Full Name <span class="text-slate-400 font-normal">(Primary display name)</span></label>
+            <input type="text" id="fullName" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g. Dr. Sarah Elizabeth Jenkins-Smyth">
+          </div>
+        </div>
+
+        <!-- First Name & Last Name Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" for="firstName">First Name <span class="text-red-500">*</span></label>
+            <input type="text" id="firstName" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g. Sarah">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" for="lastName">Last Name <span class="text-slate-400 font-normal">(Optional)</span></label>
+            <input type="text" id="lastName" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g. Jenkins-Smyth">
+          </div>
+        </div>
+
+        <!-- Position, Company & LinkedIn -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" for="jobRole">Position <span class="text-red-500">*</span></label>
+            <input type="text" id="jobRole" list="roleSuggestionsDatalist" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g. VP of Learning">
+            <datalist id="roleSuggestionsDatalist"></datalist>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" for="companyName">Company <span class="text-red-500">*</span></label>
+            <input type="text" id="companyName" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g. FinTech Innovations">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" for="linkedinUrl">LinkedIn URL</label>
+            <input type="url" id="linkedinUrl" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="https://linkedin.com/in/prospect">
+          </div>
+        </div>
+
+        <!-- Lead Source, Score & Status -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" for="leadSource">Lead Source <span class="text-red-500">*</span></label>
+            <select id="leadSource" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+              <!-- Populated from Master Data -->
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" for="relevancyScore">Relevancy Score</label>
+            <select id="relevancyScore" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+              <option value="5">★★★★★ (5 - Ultra Targeted)</option>
+              <option value="4">★★★★☆ (4 - Strong Fit)</option>
+              <option value="3" selected>★★★☆☆ (3 - Moderate Fit)</option>
+              <option value="2">★★☆☆☆ (2 - Loose Fit)</option>
+              <option value="1">★☆☆☆☆ (1 - Speculative)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" for="leadStatus">Lead Status</label>
+            <select id="leadStatus" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+              <!-- Populated from Master Data -->
+            </select>
+          </div>
+        </div>
+
+        <!-- Target Programmes Multi-Selection -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Target Programmes <span class="text-slate-400 font-normal">(Select multiple)</span></label>
+          <div id="programmePillsContainer" class="flex flex-wrap gap-1.5 p-2 bg-slate-50 border border-slate-300 rounded-lg min-h-[42px]">
+            <!-- Dynamic selectable programme pills -->
+          </div>
+          <div class="flex items-center gap-1.5 mt-1.5">
+            <input type="text" id="customProgrammeInput" placeholder="Add custom programme..." class="text-[11px] px-2 py-1 border border-slate-200 rounded flex-1 focus:ring-1 focus:ring-indigo-500">
+            <button type="button" id="btnAddCustomProgramme" class="text-[11px] font-medium px-2 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded transition shrink-0 cursor-pointer">+ Add</button>
+          </div>
+        </div>
+
+        <!-- Outreach Dates Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" for="initialDate">Initial Message Date</label>
+            <input type="date" id="initialDate" class="w-full text-xs sm:text-sm px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <button type="button" id="btnSetInitialToday" class="text-[11px] text-indigo-600 font-medium hover:underline mt-1 cursor-pointer">Set to Today</button>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" for="dueDate">
+              Follow-up Due Date 
+              <span class="text-[11px] font-normal text-slate-500">(Auto +7d)</span>
+            </label>
+            <input type="date" id="dueDate" class="w-full text-xs sm:text-sm px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <!-- Response Status Checkbox & Next Step -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <div class="flex items-center space-x-2 pt-1">
+              <input type="checkbox" id="responseReceived" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+              <label for="responseReceived" class="text-xs font-semibold text-slate-800 cursor-pointer select-none">
+                Response Received?
+              </label>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-0.5 ml-6">Checking this clears overdue follow-up alerts.</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" for="nextStep">
+              Next Step / Action <span class="text-slate-400 font-normal">(Pick from Master or type)</span>
+            </label>
+            <input 
+              type="text" 
+              id="nextStep" 
+              list="nextActionSuggestionsDatalist" 
+              class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white" 
+              placeholder="Click or type to select from Master actions..."
+            >
+            <!-- Datalist linked directly to Master Next Actions -->
+            <datalist id="nextActionSuggestionsDatalist"></datalist>
+          </div>
+        </div>
+
+        <!-- Response Notes -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1" for="responseNotes">Response Notes / Conversation Summary</label>
+          <textarea id="responseNotes" rows="2" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Notes on budget, cohort start date, training pain points..."></textarea>
+        </div>
+
+        <!-- Modal Actions -->
+        <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
+          <button type="button" id="btnCancelModal" class="px-4 py-2 text-xs sm:text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition cursor-pointer">
+            Cancel
+          </button>
+          <button type="submit" class="px-5 py-2 text-xs sm:text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition shadow-sm shadow-indigo-200 cursor-pointer">
+            Save Lead
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="quickNotesModal" class="fixed inset-0 z-50 overflow-y-auto hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-xl animate-fade-in border border-slate-100">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+        <h3 id="quickNotesProspectName" class="text-sm font-bold text-slate-900">Prospect Notes</h3>
+        <button id="btnCloseQuickNotes" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <input type="hidden" id="quickNotesLeadId" value="">
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Response Received?</label>
+          <label class="inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="quickNotesReplied" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+            <span class="ml-2 text-xs text-slate-700">Yes, prospect replied</span>
+          </label>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Next Action Step</label>
+          <input type="text" id="quickNotesNextStep" list="nextActionSuggestionsDatalist" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" placeholder="Select or type next step...">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Detailed Response Notes</label>
+          <textarea id="quickNotesText" rows="4" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 placeholder-slate-400" placeholder="Type key insights, dates, budget or objection notes..."></textarea>
+        </div>
+      </div>
+      <div class="mt-4 flex items-center justify-end space-x-2 pt-3 border-t border-slate-100">
+        <button id="btnCancelQuickNotes" class="px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg cursor-pointer">Cancel</button>
+        <button id="btnSaveQuickNotes" class="px-4 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs cursor-pointer">Save Update</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="confirmDialog" class="fixed inset-0 z-50 overflow-y-auto hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-sm w-full p-5 shadow-2xl animate-fade-in border border-slate-100 text-center">
+      <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      </div>
+      <h3 id="confirmTitle" class="text-sm font-bold text-slate-900">Delete Prospect Lead?</h3>
+      <p id="confirmMessage" class="text-xs text-slate-500 mt-1">This action cannot be undone. Are you sure you want to proceed?</p>
+      <div class="mt-5 flex items-center justify-center space-x-2">
+        <button id="confirmCancelBtn" class="px-4 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition cursor-pointer">Cancel</button>
+        <button id="confirmProceedBtn" class="px-4 py-1.5 text-xs font-semibold text-white bg-rose-600 rounded-lg hover:bg-rose-700 transition cursor-pointer">Yes, Proceed</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-200 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 pointer-events-none">
+    <span id="toastIcon">✓</span>
+    <span id="toastMessage">Action completed successfully</span>
+  </div>
+
+  <script>
+    /* STORAGE KEYS & STATE */
+    const STORAGE_KEY = 'soloconsultant_leads_db_v1';
+    const MASTER_STORAGE_KEY = 'soloconsultant_master_config_v1';
+    const SHEETS_CONFIG_KEY = 'leadpulse_sheets_config_v1';
+    const EMAIL_CONFIG_KEY = 'leadpulse_digest_email_v1';
+
+    const DEFAULT_MASTER_CONFIG = {
+      titles: [
+        'Dr',
+        'Miss',
+        'Mr',
+        'Mrs',
+        'Ms',
+        'Prof'
+      ],
+      sources: [
+        'Cold Email',
+        'Conference / Event',
+        'Former Client / Alumni',
+        'LinkedIn InMail',
+        'LinkedIn Outreach',
+        'Referral / Word of Mouth',
+        'Strategic Partner',
+        'Website Inbound'
+      ],
+      programmes: [
+        'Custom',
+        'Executive Coaching',
+        'Leadership',
+        'Project Management',
+        'Sales Mastery'
+      ],
+      statuses: [
+        'Follow-up Due',
+        'Follow-up Sent',
+        'Identified',
+        'Initial Sent',
+        'Lost',
+        'Responded',
+        'Scored',
+        'Won'
+      ],
+      roles: [
+        'Chief Commercial Officer',
+        'Chief Human Resources Officer (CHRO)',
+        'Chief Operating Officer',
+        'Director of PMO & Delivery',
+        'Head of Learning & Development',
+        'VP Enterprise Sales',
+        'VP People & Culture'
+      ],
+      nextActions: [
+        'Book 15-min discovery call',
+        'Follow up on curriculum proposal',
+        'Identify mutual connection',
+        'Invite to upcoming webinar / masterclass',
+        'Log response & update pipeline',
+        'Schedule contract review call',
+        'Send 1-page programme framework',
+        'Send case study on team performance',
+        'Send customized syllabus & pricing'
+      ]
+    };
+
+    let masterConfig = { ...DEFAULT_MASTER_CONFIG };
+    let leads = [];
+    let currentFilter = 'ALL';
+    let searchQuery = '';
+    let programmeFilter = 'ALL';
+    let sourceFilter = 'ALL';
+    let scoreFilter = 'ALL';
+    let pendingConfirmAction = null;
+    let selectedFormProgrammes = new Set();
+    let currentActiveView = 'pipeline';
+    let parsedImportLeads = [];
+
+    /* Google Sheets Config State */
+    let sheetsConfig = {
+      webAppUrl: '',
+      docUrl: '',
+      autoSync: true,
+      lastSyncTime: null,
+      isConnected: false
+    };
+    let isSyncingWithSheets = false;
+
+    /* DOM Elements */
+    const pipelineViewContainer = document.getElementById('pipelineViewContainer');
+    const masterDataViewContainer = document.getElementById('masterDataViewContainer');
+    const navViewPipeline = document.getElementById('navViewPipeline');
+    const navViewMaster = document.getElementById('navViewMaster');
+    const btnBackToPipeline = document.getElementById('btnBackToPipeline');
+    const btnRestoreMasterDefaults = document.getElementById('btnRestoreMasterDefaults');
+
+    const leadTableBody = document.getElementById('leadTableBody');
+    const emptyState = document.getElementById('emptyState');
+    const visibleLeadCount = document.getElementById('visibleLeadCount');
+    const filterDescription = document.getElementById('filterDescription');
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const filterProgramme = document.getElementById('filterProgramme');
+    const filterSource = document.getElementById('filterSource');
+    const filterScore = document.getElementById('filterScore');
+    const statusTabBtns = document.querySelectorAll('.status-tab-btn');
+    const tabBadgeDueCount = document.getElementById('tabBadgeDueCount');
+    const dbSourceBadge = document.getElementById('dbSourceBadge');
+
+    /* Metrics Elements */
+    const statFollowupsDue = document.getElementById('statFollowupsDue');
+    const statInPipeline = document.getElementById('statInPipeline');
+    const statResponses = document.getElementById('statResponses');
+    const statResponseRate = document.getElementById('statResponseRate');
+    const statWon = document.getElementById('statWon');
+    const statTotal = document.getElementById('statTotal');
+    const metricFollowUpCard = document.getElementById('metricFollowUpCard');
+    const pingDot = document.getElementById('pingDot');
+
+    /* Modals & Forms */
+    const leadModal = document.getElementById('leadModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const leadForm = document.getElementById('leadForm');
+    const formLeadId = document.getElementById('formLeadId');
+    const btnOpenAddModal = document.getElementById('btnOpenAddModal');
+    const btnCloseModal = document.getElementById('btnCloseModal');
+    const btnCancelModal = document.getElementById('btnCancelModal');
+    const initialDateInput = document.getElementById('initialDate');
+    const dueDateInput = document.getElementById('dueDate');
+    const btnSetInitialToday = document.getElementById('btnSetInitialToday');
+    const personTitleSelect = document.getElementById('personTitle');
+    const leadSourceSelect = document.getElementById('leadSource');
+    const leadStatusSelect = document.getElementById('leadStatus');
+    const roleSuggestionsDatalist = document.getElementById('roleSuggestionsDatalist');
+    const nextActionSuggestionsDatalist = document.getElementById('nextActionSuggestionsDatalist');
+
+    /* Quick Notes Modal */
+    const quickNotesModal = document.getElementById('quickNotesModal');
+    const quickNotesProspectName = document.getElementById('quickNotesProspectName');
+    const quickNotesLeadId = document.getElementById('quickNotesLeadId');
+    const quickNotesReplied = document.getElementById('quickNotesReplied');
+    const quickNotesNextStep = document.getElementById('quickNotesNextStep');
+    const quickNotesText = document.getElementById('quickNotesText');
+    const btnCloseQuickNotes = document.getElementById('btnCloseQuickNotes');
+    const btnCancelQuickNotes = document.getElementById('btnCancelQuickNotes');
+    const btnSaveQuickNotes = document.getElementById('btnSaveQuickNotes');
+
+    /* Confirm Modal */
+    const confirmDialog = document.getElementById('confirmDialog');
+    const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+    const confirmProceedBtn = document.getElementById('confirmProceedBtn');
+
+    /* Import Modal Elements */
+    const importModal = document.getElementById('importModal');
+    const btnOpenImportModal = document.getElementById('btnOpenImportModal');
+    const btnCloseImportModal = document.getElementById('btnCloseImportModal');
+    const btnCancelImportModal = document.getElementById('btnCancelImportModal');
+    const dropZone = document.getElementById('dropZone');
+    const fileImportInput = document.getElementById('fileImportInput');
+    const importFileDetails = document.getElementById('importFileDetails');
+    const importFileName = document.getElementById('importFileName');
+    const importFileStats = document.getElementById('importFileStats');
+    const btnRemoveImportFile = document.getElementById('btnRemoveImportFile');
+    const btnExecuteImport = document.getElementById('btnExecuteImport');
+    const btnDownloadTemplate = document.getElementById('btnDownloadTemplate');
+    const btnDownloadTemplateInModal = document.getElementById('btnDownloadTemplateInModal');
+
+    /* Google Sheets Modal Elements */
+    const sheetsModal = document.getElementById('sheetsModal');
+    const btnOpenSheetsModal = document.getElementById('btnOpenSheetsModal');
+    const btnCloseSheetsModal = document.getElementById('btnCloseSheetsModal');
+    const btnCancelSheetsModal = document.getElementById('btnCancelSheetsModal');
+    const btnEmptyConnectSheets = document.getElementById('btnEmptyConnectSheets');
+    const inputSheetsWebAppUrl = document.getElementById('inputSheetsWebAppUrl');
+    const inputSheetsDocUrl = document.getElementById('inputSheetsDocUrl');
+    const chkAutoSyncSheets = document.getElementById('chkAutoSyncSheets');
+    const btnSaveAndPushSheets = document.getElementById('btnSaveAndPushSheets');
+    const btnTestPullSheets = document.getElementById('btnTestPullSheets');
+    const btnDisconnectSheets = document.getElementById('btnDisconnectSheets');
+    const btnCopyAppsScript = document.getElementById('btnCopyAppsScript');
+    const appsScriptCodeBlock = document.getElementById('appsScriptCodeBlock');
+
+    /* Header Google Sheets Banner Elements */
+    const sheetsSyncBanner = document.getElementById('sheetsSyncBanner');
+    const bannerLastSyncText = document.getElementById('bannerLastSyncText');
+    const btnManualSync = document.getElementById('btnManualSync');
+    const syncSpinIcon = document.getElementById('syncSpinIcon');
+    const linkOpenConnectedSheet = document.getElementById('linkOpenConnectedSheet');
+    const headerSheetStatusText = document.getElementById('headerSheetStatusText');
+    const sheetStatusDot = document.getElementById('sheetStatusDot');
+
+    /* Email Digest Modal Elements */
+    const emailDigestModal = document.getElementById('emailDigestModal');
+    const btnOpenEmailDigestModal = document.getElementById('btnOpenEmailDigestModal');
+    const btnCardEmailDigest = document.getElementById('btnCardEmailDigest');
+    const btnBarEmailDigest = document.getElementById('btnBarEmailDigest');
+    const btnCloseEmailDigestModal = document.getElementById('btnCloseEmailDigestModal');
+    const btnCancelEmailDigest = document.getElementById('btnCancelEmailDigest');
+    const inputDigestRecipientEmail = document.getElementById('inputDigestRecipientEmail');
+    const digestDueCountBadge = document.getElementById('digestDueCountBadge');
+    const digestTodayDate = document.getElementById('digestTodayDate');
+    const digestDuePreviewList = document.getElementById('digestDuePreviewList');
+    const btnSendDigestNow = document.getElementById('btnSendDigestNow');
+    const btnOpenMailtoDigest = document.getElementById('btnOpenMailtoDigest');
+    const headerEmailBadge = document.getElementById('headerEmailBadge');
+    const sendDigestIcon = document.getElementById('sendDigestIcon');
+
+    const SAMPLE_LEADS = [
+      {
+        id: 'ld_101',
+        title: 'Mr',
+        fullName: 'Marcus Vance',
+        firstName: 'Marcus',
+        lastName: 'Vance',
+        role: 'Head of Learning & Development',
+        position: 'Head of Learning & Development',
+        company: 'Nexus FinTech UK',
+        source: 'LinkedIn Outreach',
+        linkedinUrl: 'https://linkedin.com/in/marcus-vance-ld',
+        targetProgrammes: ['Leadership', 'Project Management'],
+        relevancyScore: 5,
+        status: 'Initial Sent',
+        initialDate: getRelativeDateStr(-8),
+        dueDate: getRelativeDateStr(-1),
+        responseReceived: false,
+        responseNotes: '',
+        nextStep: 'Send 1-page programme framework'
+      },
+      {
+        id: 'ld_102',
+        title: 'Ms',
+        fullName: 'Elena Rostova',
+        firstName: 'Elena',
+        lastName: 'Rostova',
+        role: 'Chief Commercial Officer',
+        position: 'Chief Commercial Officer',
+        company: 'Apex Cloud Solutions',
+        source: 'Referral / Word of Mouth',
+        linkedinUrl: 'https://linkedin.com/in/elena-rostova-apex',
+        targetProgrammes: ['Sales Mastery'],
+        relevancyScore: 5,
+        status: 'Initial Sent',
+        initialDate: getRelativeDateStr(-7),
+        dueDate: getTodayStr(),
+        responseReceived: false,
+        responseNotes: '',
+        nextStep: 'Send case study on team performance'
+      },
+      {
+        id: 'ld_103',
+        title: 'Dr',
+        fullName: 'David Chen',
+        firstName: 'David',
+        lastName: 'Chen',
+        role: 'Director of PMO & Delivery',
+        position: 'Director of PMO & Delivery',
+        company: 'Strata Logistics',
+        source: 'Conference / Event',
+        linkedinUrl: 'https://linkedin.com/in/davidchen-pmo',
+        targetProgrammes: ['Project Management'],
+        relevancyScore: 4,
+        status: 'Responded',
+        initialDate: getRelativeDateStr(-12),
+        dueDate: getRelativeDateStr(-5),
+        responseReceived: true,
+        responseNotes: 'Requested curriculum syllabus for 14 Scrum masters. Target start is late November.',
+        nextStep: 'Book 15-min discovery call'
+      },
+      {
+        id: 'ld_104',
+        title: 'Ms',
+        fullName: 'Samantha Brooks',
+        firstName: 'Samantha',
+        lastName: 'Brooks',
+        role: 'VP People & Culture',
+        position: 'VP People & Culture',
+        company: 'Kinetix Health Tech',
+        source: 'Website Inbound',
+        linkedinUrl: 'https://linkedin.com/in/samantha-brooks-hr',
+        targetProgrammes: ['Leadership'],
+        relevancyScore: 5,
+        status: 'Won',
+        initialDate: getRelativeDateStr(-25),
+        dueDate: getRelativeDateStr(-18),
+        responseReceived: true,
+        responseNotes: 'Closed 6-week Executive Leadership Cohort for 12 Directors! £14,500 contract.',
+        nextStep: 'Schedule contract review call'
+      },
+      {
+        id: 'ld_105',
+        title: 'Mr',
+        fullName: 'Julian Ward',
+        firstName: 'Julian',
+        lastName: 'Ward',
+        role: 'Chief Operating Officer',
+        position: 'Chief Operating Officer',
+        company: 'Beacon Enterprise Systems',
+        source: 'LinkedIn InMail',
+        linkedinUrl: 'https://linkedin.com/in/julian-ward-beacon',
+        targetProgrammes: ['Leadership', 'Custom'],
+        relevancyScore: 3,
+        status: 'Identified',
+        initialDate: '',
+        dueDate: '',
+        responseReceived: false,
+        responseNotes: '',
+        nextStep: 'Send customized syllabus & pricing'
+      },
+      {
+        id: 'ld_106',
+        title: 'Prof',
+        fullName: 'Amara Okafor',
+        firstName: 'Amara',
+        lastName: 'Okafor',
+        role: 'VP Enterprise Sales',
+        position: 'VP Enterprise Sales',
+        company: 'TalentScale HR Tech',
+        source: 'Cold Email',
+        linkedinUrl: 'https://linkedin.com/in/amara-okafor-sales',
+        targetProgrammes: ['Sales Mastery', 'Leadership'],
+        relevancyScore: 4,
+        status: 'Follow-up Sent',
+        initialDate: getRelativeDateStr(-10),
+        dueDate: getRelativeDateStr(-3),
+        responseReceived: false,
+        responseNotes: 'Follow-up sent with client benchmark metrics.',
+        nextStep: 'Log response & update pipeline'
+      }
+    ];
+
+    function loadSheetsConfig() {
+      try {
+        const raw = localStorage.getItem(SHEETS_CONFIG_KEY);
+        if (raw) {
+          sheetsConfig = { ...sheetsConfig, ...JSON.parse(raw) };
+        }
+      } catch (e) {
+        console.warn('Unable to load Google Sheets config from storage', e);
+      }
+      updateSheetsUIStatus();
+    }
+
+    function saveSheetsConfig() {
+      try {
+        localStorage.setItem(SHEETS_CONFIG_KEY, JSON.stringify(sheetsConfig));
+      } catch (e) {
+        console.warn('Unable to save Google Sheets config', e);
+      }
+      updateSheetsUIStatus();
+    }
+
+    function updateSheetsUIStatus() {
+      const isConnected = !!(sheetsConfig.webAppUrl && sheetsConfig.webAppUrl.trim());
+      sheetsConfig.isConnected = isConnected;
+
+      if (sheetStatusDot) {
+        sheetStatusDot.className = `w-2 h-2 rounded-full ml-1.5 inline-block ${isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`;
+      }
+
+      if (headerSheetStatusText) {
+        headerSheetStatusText.textContent = isConnected ? 'Google Sheets' : 'Connect Sheets';
+      }
+
+      if (sheetsSyncBanner) {
+        sheetsSyncBanner.classList.toggle('hidden', !isConnected);
+      }
+
+      if (dbSourceBadge) {
+        if (isConnected) {
+          dbSourceBadge.className = 'inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-800 border border-emerald-300';
+          dbSourceBadge.innerHTML = '● Google Sheets Live';
+        } else {
+          dbSourceBadge.className = 'inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600';
+          dbSourceBadge.innerHTML = 'Storage: Local Cache';
+        }
+      }
+
+      if (linkOpenConnectedSheet && sheetsConfig.docUrl) {
+        linkOpenConnectedSheet.href = sheetsConfig.docUrl;
+        linkOpenConnectedSheet.classList.remove('hidden');
+      } else if (linkOpenConnectedSheet) {
+        linkOpenConnectedSheet.classList.add('hidden');
+      }
+
+      if (bannerLastSyncText) {
+        if (sheetsConfig.lastSyncTime) {
+          const syncDate = new Date(sheetsConfig.lastSyncTime);
+          bannerLastSyncText.textContent = `Last synced: ${syncDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        } else {
+          bannerLastSyncText.textContent = 'Auto-sync active';
+        }
+      }
+
+      if (btnDisconnectSheets) {
+        btnDisconnectSheets.classList.toggle('hidden', !isConnected);
+      }
+    }
+
+    async function syncPushToGoogleSheets(customLeads = null, showNotification = false) {
+      if (!sheetsConfig.webAppUrl || !sheetsConfig.webAppUrl.trim()) return false;
+
+      const leadsToPush = customLeads || leads;
+      isSyncingWithSheets = true;
+      if (syncSpinIcon) syncSpinIcon.classList.add('animate-spin');
+
+      try {
+        const payload = {
+          action: 'sync_all',
+          leads: leadsToPush,
+          timestamp: new Date().toISOString()
+        };
+
+        const response = await fetch(sheetsConfig.webAppUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        if (result.status === 'success') {
+          sheetsConfig.lastSyncTime = new Date().toISOString();
+          saveSheetsConfig();
+          if (showNotification) {
+            showToast(`Synced ${leadsToPush.length} leads with Google Sheets!`);
+          }
+          return true;
+        } else {
+          throw new Error(result.message || 'Google Sheets returned an error');
+        }
+      } catch (err) {
+        console.warn('Google Sheets sync error:', err);
+        if (showNotification) {
+          showToast(`Google Sheets sync warning: Local copy saved. (${err.message})`, true);
+        }
+        return false;
+      } finally {
+        isSyncingWithSheets = false;
+        if (syncSpinIcon) syncSpinIcon.classList.remove('animate-spin');
+        updateSheetsUIStatus();
+      }
+    }
+
+    async function pullFromGoogleSheets(showNotification = true) {
+      if (!sheetsConfig.webAppUrl || !sheetsConfig.webAppUrl.trim()) {
+        showToast('Please configure your Google Apps Script Web App URL first', true);
+        return false;
+      }
+
+      isSyncingWithSheets = true;
+      if (syncSpinIcon) syncSpinIcon.classList.add('animate-spin');
+
+      try {
+        const response = await fetch(sheetsConfig.webAppUrl, {
+          method: 'GET',
+          redirect: 'follow'
+        });
+
+        const result = await response.json();
+        if (result.status === 'success' && Array.isArray(result.data)) {
+          if (result.data.length > 0) {
+            leads = normalizeImportedRows(result.data);
+            saveLeadsLocally();
+            render();
+            sheetsConfig.lastSyncTime = new Date().toISOString();
+            saveSheetsConfig();
+            if (showNotification) {
+              showToast(`Loaded ${leads.length} leads directly from Google Sheets!`);
+            }
+          } else {
+            if (showNotification) {
+              showToast('Google Sheet is currently empty. Pushed local leads to initialize.');
+            }
+            await syncPushToGoogleSheets(leads, false);
+          }
+          return true;
+        } else {
+          throw new Error(result.message || 'Unable to parse sheet response');
+        }
+      } catch (err) {
+        console.error('Failed to pull from Google Sheets:', err);
+        if (showNotification) {
+          showToast(`Could not connect to Google Sheet: ${err.message}`, true);
+        }
+        return false;
+      } finally {
+        isSyncingWithSheets = false;
+        if (syncSpinIcon) syncSpinIcon.classList.remove('animate-spin');
+        updateSheetsUIStatus();
+      }
+    }
+
+    function sortAllMasterCategories() {
+      const sortFn = (a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' });
+      if (Array.isArray(masterConfig.titles)) masterConfig.titles.sort(sortFn);
+      if (Array.isArray(masterConfig.sources)) masterConfig.sources.sort(sortFn);
+      if (Array.isArray(masterConfig.programmes)) masterConfig.programmes.sort(sortFn);
+      if (Array.isArray(masterConfig.statuses)) masterConfig.statuses.sort(sortFn);
+      if (Array.isArray(masterConfig.roles)) masterConfig.roles.sort(sortFn);
+      if (Array.isArray(masterConfig.nextActions)) masterConfig.nextActions.sort(sortFn);
+    }
+
+    function loadMasterConfig() {
+      try {
+        const raw = localStorage.getItem(MASTER_STORAGE_KEY);
+        if (raw) {
+          masterConfig = JSON.parse(raw);
+          if (!Array.isArray(masterConfig.titles) || masterConfig.titles.length === 0) {
+            masterConfig.titles = [...DEFAULT_MASTER_CONFIG.titles];
+          }
+          if (!Array.isArray(masterConfig.sources) || masterConfig.sources.length === 0) {
+            masterConfig.sources = [...DEFAULT_MASTER_CONFIG.sources];
+          }
+          if (!Array.isArray(masterConfig.programmes) || masterConfig.programmes.length === 0) {
+            masterConfig.programmes = [...DEFAULT_MASTER_CONFIG.programmes];
+          }
+          if (!Array.isArray(masterConfig.statuses) || masterConfig.statuses.length === 0) {
+            masterConfig.statuses = [...DEFAULT_MASTER_CONFIG.statuses];
+          }
+          if (!Array.isArray(masterConfig.roles) || masterConfig.roles.length === 0) {
+            masterConfig.roles = [...DEFAULT_MASTER_CONFIG.roles];
+          }
+          if (!Array.isArray(masterConfig.nextActions) || masterConfig.nextActions.length === 0) {
+            masterConfig.nextActions = [...DEFAULT_MASTER_CONFIG.nextActions];
+          }
+        } else {
+          masterConfig = JSON.parse(JSON.stringify(DEFAULT_MASTER_CONFIG));
+          saveMasterConfig();
+        }
+      } catch (e) {
+        masterConfig = JSON.parse(JSON.stringify(DEFAULT_MASTER_CONFIG));
+      }
+
+      sortAllMasterCategories();
+      populateAllDropdownsFromMaster();
+      renderMasterDataView();
+    }
+
+    function saveMasterConfig() {
+      sortAllMasterCategories();
+      try {
+        localStorage.setItem(MASTER_STORAGE_KEY, JSON.stringify(masterConfig));
+      } catch (err) {
+        showToast('Storage error: unable to save master settings', true);
+      }
+      populateAllDropdownsFromMaster();
+      renderMasterDataView();
+    }
+
+    function populateAllDropdownsFromMaster() {
+      // 1. Title Dropdown in Lead Modal
+      if (personTitleSelect) {
+        const currentTitle = personTitleSelect.value;
+        let titleOpts = '<option value="">None</option>';
+        (masterConfig.titles || []).forEach(t => {
+          titleOpts += `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`;
+        });
+        personTitleSelect.innerHTML = titleOpts;
+        if (currentTitle && masterConfig.titles.includes(currentTitle)) {
+          personTitleSelect.value = currentTitle;
+        }
+      }
+
+      // 2. Lead Source Filter Dropdown
+      if (filterSource) {
+        const currentSelectedSource = filterSource.value;
+        let sourceOpts = '<option value="ALL">All Sources</option>';
+        (masterConfig.sources || []).forEach(src => {
+          sourceOpts += `<option value="${escapeHtml(src)}">${escapeHtml(src)}</option>`;
+        });
+        filterSource.innerHTML = sourceOpts;
+        if (masterConfig.sources.includes(currentSelectedSource) || currentSelectedSource === 'ALL') {
+          filterSource.value = currentSelectedSource;
+        } else {
+          filterSource.value = 'ALL';
+          sourceFilter = 'ALL';
+        }
+      }
+
+      // 3. Programme Filter Dropdown
+      if (filterProgramme) {
+        const currentSelectedProg = filterProgramme.value;
+        let progOpts = '<option value="ALL">All Programmes</option>';
+        (masterConfig.programmes || []).forEach(prog => {
+          progOpts += `<option value="${escapeHtml(prog)}">${escapeHtml(prog)}</option>`;
+        });
+        filterProgramme.innerHTML = progOpts;
+        if (masterConfig.programmes.includes(currentSelectedProg) || currentSelectedProg === 'ALL') {
+          filterProgramme.value = currentSelectedProg;
+        } else {
+          filterProgramme.value = 'ALL';
+          programmeFilter = 'ALL';
+        }
+      }
+
+      // 4. Modal Form: Lead Source Selector
+      if (leadSourceSelect) {
+        let formSourceOpts = '';
+        (masterConfig.sources || []).forEach(src => {
+          formSourceOpts += `<option value="${escapeHtml(src)}">${escapeHtml(src)}</option>`;
+        });
+        leadSourceSelect.innerHTML = formSourceOpts;
+      }
+
+      // 5. Modal Form: Lead Status Selector
+      if (leadStatusSelect) {
+        let formStatusOpts = '';
+        (masterConfig.statuses || []).forEach(st => {
+          formStatusOpts += `<option value="${escapeHtml(st)}">${escapeHtml(st)}</option>`;
+        });
+        leadStatusSelect.innerHTML = formStatusOpts;
+      }
+
+      // 6. Modal Form: Position Suggestions Datalist
+      if (roleSuggestionsDatalist) {
+        let roleDatalistHtml = '';
+        (masterConfig.roles || []).forEach(r => {
+          roleDatalistHtml += `<option value="${escapeHtml(r)}">`;
+        });
+        roleSuggestionsDatalist.innerHTML = roleDatalistHtml;
+      }
+
+      // 7. Modal Form & Quick Notes: Next Action Suggestions Datalist
+      if (nextActionSuggestionsDatalist) {
+        let actionDatalistHtml = '';
+        (masterConfig.nextActions || []).forEach(act => {
+          actionDatalistHtml += `<option value="${escapeHtml(act)}">`;
+        });
+        nextActionSuggestionsDatalist.innerHTML = actionDatalistHtml;
+      }
+    }
+
+    function renderMasterDataView() {
+      const badgeTitle = document.getElementById('badgeCountTitle');
+      const badgeSource = document.getElementById('badgeCountSource');
+      const badgeProg = document.getElementById('badgeCountProgramme');
+      const badgeStatus = document.getElementById('badgeCountStatus');
+      const badgeRole = document.getElementById('badgeCountRole');
+      const badgeNextAction = document.getElementById('badgeCountNextAction');
+
+      if (badgeTitle) badgeTitle.textContent = (masterConfig.titles || []).length;
+      if (badgeSource) badgeSource.textContent = (masterConfig.sources || []).length;
+      if (badgeProg) badgeProg.textContent = (masterConfig.programmes || []).length;
+      if (badgeStatus) badgeStatus.textContent = (masterConfig.statuses || []).length;
+      if (badgeRole) badgeRole.textContent = (masterConfig.roles || []).length;
+      if (badgeNextAction) badgeNextAction.textContent = (masterConfig.nextActions || []).length;
+
+      renderMasterListCategory('masterListTitle', masterConfig.titles, 'titles', 'Title');
+      renderMasterListCategory('masterListSource', masterConfig.sources, 'sources', 'Source');
+      renderMasterListCategory('masterListProgramme', masterConfig.programmes, 'programmes', 'Programme');
+      renderMasterListCategory('masterListStatus', masterConfig.statuses, 'statuses', 'Status');
+      renderMasterListCategory('masterListRole', masterConfig.roles, 'roles', 'Position');
+      renderMasterListCategory('masterListNextAction', masterConfig.nextActions, 'nextActions', 'Next Action');
+    }
+
+    function renderMasterListCategory(elementId, items, configKey, label) {
+      const container = document.getElementById(elementId);
+      if (!container) return;
+
+      if (!items || items.length === 0) {
+        container.innerHTML = `<div class="text-xs text-slate-400 italic py-2 text-center">No ${label.toLowerCase()}s configured</div>`;
+        return;
+      }
+
+      container.innerHTML = items.map((item, idx) => `
+        <div id="item-card-${configKey}-${idx}" class="flex items-center justify-between py-1.5 px-2.5 bg-white border border-slate-200 rounded-lg text-xs hover:border-slate-300 transition group">
+          <span id="item-label-${configKey}-${idx}" class="font-medium text-slate-800 truncate pr-2">${escapeHtml(item)}</span>
+          <div class="flex items-center space-x-0.5 shrink-0">
+            <button 
+              type="button" 
+              onclick="startEditMasterItem('${configKey}', ${idx})" 
+              title="Edit this ${label}"
+              class="text-slate-400 hover:text-indigo-600 p-1 rounded hover:bg-indigo-50 transition cursor-pointer"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+            </button>
+            <button 
+              type="button" 
+              onclick="removeMasterItem('${configKey}', ${idx})" 
+              title="Delete this ${label}"
+              class="text-slate-400 hover:text-rose-600 p-1 rounded hover:bg-rose-50 transition cursor-pointer"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.startEditMasterItem = function(configKey, idx) {
+      const card = document.getElementById(`item-card-${configKey}-${idx}`);
+      if (!card || !masterConfig[configKey] || !masterConfig[configKey][idx]) return;
+
+      const currentVal = masterConfig[configKey][idx];
+
+      card.className = "flex items-center gap-1.5 py-1 px-2 bg-indigo-50/70 border border-indigo-300 rounded-lg text-xs shadow-xs";
+      card.innerHTML = `
+        <form onsubmit="saveEditMasterItem(event, '${configKey}', ${idx})" class="flex items-center w-full gap-1">
+          <input 
+            type="text" 
+            id="edit-input-${configKey}-${idx}" 
+            value="${escapeHtml(currentVal)}" 
+            required 
+            class="flex-1 text-xs px-2 py-1 bg-white border border-indigo-400 rounded focus:ring-1 focus:ring-indigo-500 font-medium text-slate-800"
+          >
+          <button type="submit" title="Save changes" class="p-1 text-emerald-700 hover:bg-emerald-100 rounded transition cursor-pointer">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          </button>
+          <button type="button" onclick="renderMasterDataView()" title="Cancel" class="p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded transition cursor-pointer">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </form>
+      `;
+
+      const input = document.getElementById(`edit-input-${configKey}-${idx}`);
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    };
+
+    window.saveEditMasterItem = function(event, configKey, idx) {
+      event.preventDefault();
+      const input = document.getElementById(`edit-input-${configKey}-${idx}`);
+      if (!input) return;
+
+      const newVal = input.value.trim();
+      if (!newVal) return;
+
+      const oldVal = masterConfig[configKey][idx];
+
+      const duplicateIdx = masterConfig[configKey].findIndex((item, i) => i !== idx && item.toLowerCase() === newVal.toLowerCase());
+      if (duplicateIdx !== -1) {
+        showToast(`"${newVal}" already exists in this category`, true);
+        return;
+      }
+
+      masterConfig[configKey][idx] = newVal;
+      saveMasterConfig();
+      render();
+      showToast(`Updated "${oldVal}" → "${newVal}"`);
+    };
+
+    window.removeMasterItem = function(configKey, index) {
+      if (!masterConfig[configKey] || !masterConfig[configKey][index]) return;
+      const itemName = masterConfig[configKey][index];
+
+      if (masterConfig[configKey].length <= 1) {
+        showToast(`Cannot delete the last remaining option in this category`, true);
+        return;
+      }
+
+      masterConfig[configKey].splice(index, 1);
+      saveMasterConfig();
+      render();
+      showToast(`Removed "${itemName}" from ${configKey}`);
+    };
+
+    function attachMasterFormHandlers() {
+      // 1. Add Title
+      const formTitle = document.getElementById('formAddMasterTitle');
+      if (formTitle) {
+        formTitle.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const input = document.getElementById('inputNewMasterTitle');
+          const val = input.value.trim();
+          if (!val) return;
+          if (!masterConfig.titles) masterConfig.titles = [];
+          if (masterConfig.titles.some(t => t.toLowerCase() === val.toLowerCase())) {
+            showToast('Title already exists', true);
+            return;
+          }
+          masterConfig.titles.push(val);
+          input.value = '';
+          saveMasterConfig();
+          showToast(`Added title: "${val}"`);
+        });
+      }
+
+      // 2. Add Source
+      const formSource = document.getElementById('formAddMasterSource');
+      if (formSource) {
+        formSource.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const input = document.getElementById('inputNewMasterSource');
+          const val = input.value.trim();
+          if (!val) return;
+          if (!masterConfig.sources) masterConfig.sources = [];
+          if (masterConfig.sources.some(s => s.toLowerCase() === val.toLowerCase())) {
+            showToast('Source already exists', true);
+            return;
+          }
+          masterConfig.sources.push(val);
+          input.value = '';
+          saveMasterConfig();
+          showToast(`Added lead source: "${val}"`);
+        });
+      }
+
+      // 3. Add Programme
+      const formProg = document.getElementById('formAddMasterProgramme');
+      if (formProg) {
+        formProg.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const input = document.getElementById('inputNewMasterProgramme');
+          const val = input.value.trim();
+          if (!val) return;
+          if (!masterConfig.programmes) masterConfig.programmes = [];
+          if (masterConfig.programmes.some(p => p.toLowerCase() === val.toLowerCase())) {
+            showToast('Programme already exists', true);
+            return;
+          }
+          masterConfig.programmes.push(val);
+          input.value = '';
+          saveMasterConfig();
+          showToast(`Added programme: "${val}"`);
+        });
+      }
+
+      // 4. Add Status
+      const formStatus = document.getElementById('formAddMasterStatus');
+      if (formStatus) {
+        formStatus.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const input = document.getElementById('inputNewMasterStatus');
+          const val = input.value.trim();
+          if (!val) return;
+          if (!masterConfig.statuses) masterConfig.statuses = [];
+          if (masterConfig.statuses.some(st => st.toLowerCase() === val.toLowerCase())) {
+            showToast('Status already exists', true);
+            return;
+          }
+          masterConfig.statuses.push(val);
+          input.value = '';
+          saveMasterConfig();
+          showToast(`Added status: "${val}"`);
+        });
+      }
+
+      // 5. Add Position
+      const formRole = document.getElementById('formAddMasterRole');
+      if (formRole) {
+        formRole.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const input = document.getElementById('inputNewMasterRole');
+          const val = input.value.trim();
+          if (!val) return;
+          if (!masterConfig.roles) masterConfig.roles = [];
+          if (masterConfig.roles.some(r => r.toLowerCase() === val.toLowerCase())) {
+            showToast('Position suggestion already exists', true);
+            return;
+          }
+          masterConfig.roles.push(val);
+          input.value = '';
+          saveMasterConfig();
+          showToast(`Added position suggestion: "${val}"`);
+        });
+      }
+
+      // 6. Add Next Action
+      const formNextAction = document.getElementById('formAddMasterNextAction');
+      if (formNextAction) {
+        formNextAction.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const input = document.getElementById('inputNewMasterNextAction');
+          const val = input.value.trim();
+          if (!val) return;
+          if (!masterConfig.nextActions) masterConfig.nextActions = [];
+          if (masterConfig.nextActions.some(a => a.toLowerCase() === val.toLowerCase())) {
+            showToast('Next action already exists', true);
+            return;
+          }
+          masterConfig.nextActions.push(val);
+          input.value = '';
+          saveMasterConfig();
+          showToast(`Added next action: "${val}"`);
+        });
+      }
+
+      // Restore Defaults Button Handler
+      if (btnRestoreMasterDefaults) {
+        btnRestoreMasterDefaults.addEventListener('click', () => {
+          document.getElementById('confirmTitle').textContent = 'Restore Default Master Dropdowns?';
+          document.getElementById('confirmMessage').textContent = 'This will reset Titles, Sources, Programmes, Statuses, Positions, and Next Actions to initial defaults. Your prospect pipeline data will remain untouched.';
+
+          pendingConfirmAction = () => {
+            masterConfig = JSON.parse(JSON.stringify(DEFAULT_MASTER_CONFIG));
+            saveMasterConfig();
+            showToast('Master dropdown options restored to defaults');
+          };
+
+          confirmDialog.classList.remove('hidden');
+        });
+      }
+    }
+
+    function switchView(viewName) {
+      currentActiveView = viewName;
+      if (viewName === 'pipeline') {
+        if (pipelineViewContainer) pipelineViewContainer.classList.remove('hidden');
+        if (masterDataViewContainer) masterDataViewContainer.classList.add('hidden');
+        if (navViewPipeline) navViewPipeline.className = 'px-2.5 sm:px-3 py-1.5 text-xs font-bold rounded-lg bg-white text-indigo-700 shadow-xs transition flex items-center gap-1.5 cursor-pointer';
+        if (navViewMaster) navViewMaster.className = 'px-2.5 sm:px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 transition flex items-center gap-1.5 cursor-pointer';
+      } else {
+        if (pipelineViewContainer) pipelineViewContainer.classList.add('hidden');
+        if (masterDataViewContainer) masterDataViewContainer.classList.remove('hidden');
+        if (navViewMaster) navViewMaster.className = 'px-2.5 sm:px-3 py-1.5 text-xs font-bold rounded-lg bg-white text-indigo-700 shadow-xs transition flex items-center gap-1.5 cursor-pointer';
+        if (navViewPipeline) navViewPipeline.className = 'px-2.5 sm:px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 transition flex items-center gap-1.5 cursor-pointer';
+        renderMasterDataView();
+      }
+    }
+
+    if (navViewPipeline) navViewPipeline.addEventListener('click', () => switchView('pipeline'));
+    if (navViewMaster) navViewMaster.addEventListener('click', () => switchView('master'));
+    if (btnBackToPipeline) btnBackToPipeline.addEventListener('click', () => switchView('pipeline'));
+
+    function getTodayStr() {
+      const d = new Date();
+      return formatDateToISO(d);
+    }
+
+    function getRelativeDateStr(offsetDays) {
+      const d = new Date();
+      d.setDate(d.getDate() + offsetDays);
+      return formatDateToISO(d);
+    }
+
+    function formatDateToISO(dateObj) {
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function calculateDueDateFrom(initialDateStr) {
+      if (!initialDateStr) return '';
+      try {
+        const parts = initialDateStr.split('-');
+        if (parts.length !== 3) return '';
+        const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        d.setDate(d.getDate() + 7);
+        return formatDateToISO(d);
+      } catch (e) {
+        return '';
+      }
+    }
+
+    function isLeadFollowUpDue(lead) {
+      if (!lead) return false;
+      if (lead.responseReceived) return false;
+      if (lead.status === 'Won' || lead.status === 'Lost') return false;
+      if (lead.status === 'Follow-up Due') return true;
+
+      if (lead.status === 'Initial Sent' && lead.dueDate) {
+        const todayStr = getTodayStr();
+        return lead.dueDate <= todayStr;
+      }
+      return false;
+    }
+
+    function getLeadProgrammes(lead) {
+      if (!lead) return [];
+      if (Array.isArray(lead.targetProgrammes) && lead.targetProgrammes.length > 0) return lead.targetProgrammes;
+      if (Array.isArray(lead.targetProgramme) && lead.targetProgramme.length > 0) return lead.targetProgramme;
+      if (typeof lead.targetProgramme === 'string' && lead.targetProgramme.trim()) {
+        return lead.targetProgramme.split(';').map(s => s.trim()).filter(Boolean);
+      }
+      if (typeof lead.targetProgrammes === 'string' && lead.targetProgrammes.trim()) {
+        return lead.targetProgrammes.split(';').map(s => s.trim()).filter(Boolean);
+      }
+      return [];
+    }
+
+    function renderModalProgrammePills() {
+      const container = document.getElementById('programmePillsContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      (masterConfig.programmes || []).forEach(prog => {
+        const isSelected = selectedFormProgrammes.has(prog);
+        const pill = document.createElement('button');
+        pill.type = 'button';
+        pill.textContent = prog;
+        pill.className = `text-[11px] font-medium px-2 py-1 rounded-md border transition cursor-pointer flex items-center gap-1 ${
+          isSelected 
+            ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs' 
+            : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-100'
+        }`;
+        
+        pill.addEventListener('click', () => {
+          if (selectedFormProgrammes.has(prog)) {
+            selectedFormProgrammes.delete(prog);
+          } else {
+            selectedFormProgrammes.add(prog);
+          }
+          renderModalProgrammePills();
+        });
+
+        container.appendChild(pill);
+      });
+    }
+
+    function loadLeads() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          leads = JSON.parse(raw);
+          leads.forEach(l => {
+            if (!l.source) l.source = 'LinkedIn Outreach';
+          });
+        } else {
+          leads = [...SAMPLE_LEADS];
+          saveLeadsLocally();
+        }
+      } catch (err) {
+        leads = [...SAMPLE_LEADS];
+      }
+
+      if (sheetsConfig.webAppUrl && sheetsConfig.webAppUrl.trim()) {
+        pullFromGoogleSheets(false).catch(e => console.log('Background sheets fetch failed, using cache', e));
+      }
+
+      render();
+    }
+
+    function saveLeadsLocally() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
+      } catch (err) {
+        showToast('Storage error: unable to save local state', true);
+      }
+      updateMetrics();
+    }
+
+    function persistLeads(showSyncToast = false) {
+      saveLeadsLocally();
+      if (sheetsConfig.isConnected && sheetsConfig.autoSync) {
+        syncPushToGoogleSheets(leads, showSyncToast);
+      }
+      updateMetrics();
+    }
+
+    let toastTimeout = null;
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMessage');
+      const toastIcon = document.getElementById('toastIcon');
+      if (!toast || !toastMsg) return;
+
+      if (toastTimeout) clearTimeout(toastTimeout);
+
+      toastMsg.textContent = message;
+      if (toastIcon) toastIcon.textContent = isError ? '✕' : '✓';
+      toast.className = `fixed bottom-5 right-5 z-50 transform transition-all duration-300 text-xs px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 font-medium ${
+        isError ? 'bg-rose-700 text-white' : 'bg-slate-900 text-white'
+      }`;
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+
+    function renderStatusBadge(status, isDue) {
+      if (isDue) {
+        return `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-100 text-amber-900 border border-amber-300 animate-pulse">
+                  ⚠️ Follow-up Due
+                </span>`;
+      }
+
+      switch (status) {
+        case 'Won':
+          return `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300">🏆 Won Deal</span>`;
+        case 'Responded':
+          return `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">💬 Responded</span>`;
+        case 'Initial Sent':
+          return `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">📨 Initial Sent</span>`;
+        case 'Follow-up Sent':
+          return `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">📬 Follow-up Sent</span>`;
+        case 'Scored':
+          return `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-purple-50 text-purple-700 border border-purple-200">🎯 Scored</span>`;
+        case 'Lost':
+          return `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">✕ Lost</span>`;
+        case 'Identified':
+        default:
+          return `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200">🔍 ${escapeHtml(status || 'Identified')}</span>`;
+      }
+    }
+
+    function renderSourceBadge(source) {
+      const src = source || 'LinkedIn Outreach';
+      let icon = '💼';
+      let colorClass = 'bg-slate-100 text-slate-700 border-slate-200';
+
+      if (src.includes('LinkedIn')) {
+        icon = '🔗';
+        colorClass = 'bg-blue-50 text-blue-700 border-blue-200';
+      } else if (src.includes('Referral')) {
+        icon = '🤝';
+        colorClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+      } else if (src.includes('Website') || src.includes('Inbound')) {
+        icon = '🌐';
+        colorClass = 'bg-teal-50 text-teal-700 border-teal-200';
+      } else if (src.includes('Conference') || src.includes('Event')) {
+        icon = '🎤';
+        colorClass = 'bg-purple-50 text-purple-700 border-purple-200';
+      } else if (src.includes('Cold Email')) {
+        icon = '✉️';
+        colorClass = 'bg-amber-50 text-amber-800 border-amber-200';
+      } else if (src.includes('Partner')) {
+        icon = '⚡';
+        colorClass = 'bg-indigo-50 text-indigo-700 border-indigo-200';
+      }
+
+      return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium border ${colorClass}" title="Source: ${escapeHtml(src)}">
+                <span>${icon}</span>
+                <span class="truncate max-w-[110px]">${escapeHtml(src)}</span>
+              </span>`;
+    }
+
+    function renderProgrammeBadges(lead) {
+      const programmes = getLeadProgrammes(lead);
+      if (!programmes || programmes.length === 0) {
+        return `<span class="text-slate-400 text-[10px] italic">No programme set</span>`;
+      }
+
+      return `<div class="flex flex-wrap gap-1">` + programmes.map(prog => {
+        let colorClass = "bg-slate-100 text-slate-700 border-slate-200";
+        if (prog === 'Leadership') colorClass = "bg-purple-50 text-purple-700 border-purple-200";
+        else if (prog === 'Sales Mastery') colorClass = "bg-sky-50 text-sky-700 border-sky-200";
+        else if (prog === 'Project Management') colorClass = "bg-amber-50 text-amber-800 border-amber-200";
+        else if (prog === 'Custom') colorClass = "bg-teal-50 text-teal-700 border-teal-200";
+        else colorClass = "bg-indigo-50 text-indigo-700 border-indigo-200";
+
+        return `<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider border ${colorClass}">${escapeHtml(prog)}</span>`;
+      }).join('') + `</div>`;
+    }
+
+    function renderStarRating(score) {
+      const num = parseInt(score) || 3;
+      let stars = '';
+      for (let i = 1; i <= 5; i++) {
+        if (i <= num) {
+          stars += '<span class="text-amber-400">★</span>';
+        } else {
+          stars += '<span class="text-slate-200">★</span>';
+        }
+      }
+      return `<div class="flex text-xs tracking-tight" title="Relevancy: ${num}/5">${stars}</div>`;
+    }
+
+    function renderDueBadge(dueDateStr, isDue) {
+      if (!dueDateStr) {
+        return `<span class="text-slate-400 text-[11px] italic">Not scheduled</span>`;
+      }
+
+      const todayStr = getTodayStr();
+      const isPast = dueDateStr < todayStr;
+      const isToday = dueDateStr === todayStr;
+
+      let subLabel = '';
+      if (isToday) {
+        subLabel = `<span class="inline-block text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.2 rounded mt-0.5">Due Today</span>`;
+      } else if (isPast) {
+        subLabel = `<span class="inline-block text-[10px] font-bold text-rose-700 bg-rose-100 px-1.5 py-0.2 rounded mt-0.5">Overdue</span>`;
+      } else {
+        subLabel = `<span class="text-[10px] text-slate-400">Target</span>`;
+      }
+
+      return `
+        <div class="flex flex-col">
+          <span class="text-slate-700 font-mono text-[11px] font-medium">${dueDateStr}</span>
+          ${subLabel}
+        </div>
+      `;
+    }
+
+    function getFilteredLeads() {
+      return leads.filter(lead => {
+        if (currentFilter === 'DUE') {
+          if (!isLeadFollowUpDue(lead)) return false;
+        } else if (currentFilter !== 'ALL') {
+          if (lead.status !== currentFilter) return false;
+        }
+
+        if (sourceFilter !== 'ALL') {
+          if ((lead.source || 'LinkedIn Outreach') !== sourceFilter) return false;
+        }
+
+        if (programmeFilter !== 'ALL') {
+          const progs = getLeadProgrammes(lead);
+          if (!progs.includes(programmeFilter)) return false;
+        }
+
+        if (scoreFilter !== 'ALL') {
+          const reqScore = parseInt(scoreFilter);
+          if ((lead.relevancyScore || 0) < reqScore) return false;
+        }
+
+        if (searchQuery.trim() !== '') {
+          const q = searchQuery.toLowerCase().trim();
+          const fullName = (lead.fullName || `${lead.firstName || ''} ${lead.lastName || ''}`).toLowerCase();
+          const title = (lead.title || '').toLowerCase();
+          const position = (lead.position || lead.role || '').toLowerCase();
+          const company = (lead.company || '').toLowerCase();
+          const source = (lead.source || '').toLowerCase();
+          const progString = getLeadProgrammes(lead).join(' ').toLowerCase();
+          const nextStep = (lead.nextStep || '').toLowerCase();
+
+          const matches = fullName.includes(q) || title.includes(q) || position.includes(q) || company.includes(q) || source.includes(q) || progString.includes(q) || nextStep.includes(q);
+          if (!matches) return false;
+        }
+
+        return true;
+      });
+    }
+
+    function updateMetrics() {
+      let dueCount = 0;
+      let inPipelineCount = 0;
+      let respondedCount = 0;
+      let wonCount = 0;
+
+      leads.forEach(l => {
+        if (isLeadFollowUpDue(l)) {
+          dueCount++;
+        }
+        if (l.status === 'Initial Sent' || l.status === 'Follow-up Due' || l.status === 'Follow-up Sent') {
+          inPipelineCount++;
+        }
+        if (l.responseReceived || l.status === 'Responded' || l.status === 'Won') {
+          respondedCount++;
+        }
+        if (l.status === 'Won') {
+          wonCount++;
+        }
+      });
+
+      if (statFollowupsDue) statFollowupsDue.textContent = dueCount;
+      if (statInPipeline) statInPipeline.textContent = inPipelineCount;
+      if (statResponses) statResponses.textContent = respondedCount;
+      if (statWon) statWon.textContent = wonCount;
+      if (statTotal) statTotal.textContent = `${leads.length} Total Leads`;
+
+      if (headerEmailBadge) headerEmailBadge.textContent = dueCount;
+
+      const outreachTotal = leads.filter(l => l.initialDate).length;
+      const rate = outreachTotal > 0 ? Math.round((respondedCount / outreachTotal) * 100) : 0;
+      if (statResponseRate) statResponseRate.textContent = `${rate}% reply rate`;
+
+      if (tabBadgeDueCount) {
+        tabBadgeDueCount.textContent = dueCount;
+        tabBadgeDueCount.classList.toggle('hidden', dueCount === 0);
+      }
+      if (pingDot) {
+        pingDot.classList.toggle('hidden', dueCount === 0);
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function render() {
+      updateMetrics();
+      const filtered = getFilteredLeads();
+      if (visibleLeadCount) visibleLeadCount.textContent = filtered.length;
+
+      let desc = '';
+      if (currentFilter === 'DUE') desc += '(Filtered: Follow-ups Due) ';
+      else if (currentFilter !== 'ALL') desc += `(Filtered: ${currentFilter}) `;
+      if (sourceFilter !== 'ALL') desc += `[Source: ${sourceFilter}] `;
+      if (programmeFilter !== 'ALL') desc += `[Track: ${programmeFilter}] `;
+      if (searchQuery) desc += `matching "${escapeHtml(searchQuery)}"`;
+      if (filterDescription) filterDescription.textContent = desc;
+
+      if (filtered.length === 0) {
+        if (leadTableBody) leadTableBody.innerHTML = '';
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+      }
+
+      if (emptyState) emptyState.classList.add('hidden');
+
+      filtered.sort((a, b) => {
+        const aDue = isLeadFollowUpDue(a);
+        const bDue = isLeadFollowUpDue(b);
+        if (aDue && !bDue) return -1;
+        if (!aDue && bDue) return 1;
+        return (b.dueDate || '').localeCompare(a.dueDate || '');
+      });
+
+      let html = '';
+      filtered.forEach(lead => {
+        const isDue = isLeadFollowUpDue(lead);
+        const rowHighlightClass = isDue 
+          ? 'bg-amber-50/50 hover:bg-amber-50/80 border-l-4 border-l-amber-500' 
+          : lead.status === 'Won' 
+            ? 'bg-emerald-50/30 hover:bg-emerald-50/60 border-l-4 border-l-emerald-500' 
+            : 'hover:bg-slate-50 border-l-4 border-l-transparent';
+
+        const displayTitle = lead.title ? `${escapeHtml(lead.title)} ` : '';
+        const displayName = lead.fullName ? escapeHtml(lead.fullName) : `${escapeHtml(lead.firstName || '')} ${escapeHtml(lead.lastName || '')}`.trim();
+        const displayPosition = lead.position || lead.role || 'Position unlisted';
+
+        const linkedinLinkHtml = lead.linkedinUrl 
+          ? `<a href="${escapeHtml(lead.linkedinUrl)}" target="_blank" rel="noopener noreferrer" title="Open LinkedIn Profile" class="text-blue-600 hover:text-blue-800 p-1 hover:bg-blue-50 rounded transition inline-flex items-center cursor-pointer">
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.738-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+              </svg>
+             </a>` 
+          : '';
+
+        html += `
+          <tr class="transition-colors ${rowHighlightClass}" data-lead-id="${lead.id}">
+            
+            <!-- Prospect & Company (Clickable Name opens Edit Modal) -->
+            <td class="py-3 px-4">
+              <div class="flex items-start justify-between">
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <button 
+                      type="button" 
+                      onclick="openEditLeadModal('${lead.id}')" 
+                      title="Click to edit ${escapeHtml(lead.firstName || displayName)}'s details" 
+                      class="font-bold text-slate-900 hover:text-indigo-600 hover:underline text-left text-xs sm:text-sm transition cursor-pointer flex items-center gap-1 group"
+                    >
+                      <span>${displayTitle}${displayName || 'Unnamed Prospect'}</span>
+                      <svg class="w-3 h-3 text-slate-400 group-hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                      </svg>
+                    </button>
+                    ${linkedinLinkHtml}
+                  </div>
+                  <div class="text-[11px] font-medium text-slate-600 mt-0.5">${escapeHtml(displayPosition)}</div>
+                  <div class="text-[11px] text-slate-400 flex items-center gap-1">
+                    <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                    <span>${escapeHtml(lead.company || 'Company unlisted')}</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Lead Source -->
+            <td class="py-3 px-3 whitespace-nowrap">
+              ${renderSourceBadge(lead.source)}
+            </td>
+
+            <!-- Programme & Relevancy -->
+            <td class="py-3 px-3">
+              <div class="space-y-1">
+                ${renderProgrammeBadges(lead)}
+                <div class="pt-0.5">
+                  ${renderStarRating(lead.relevancyScore)}
+                </div>
+              </div>
+            </td>
+
+            <!-- Outreach Dates (Initial & Due) -->
+            <td class="py-3 px-3">
+              <div class="space-y-1 text-[11px]">
+                <div class="flex items-center justify-between text-slate-500">
+                  <span class="text-[10px] text-slate-400">Initial:</span>
+                  <span class="font-mono text-slate-700">${lead.initialDate || '—'}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] text-slate-400">Due:</span>
+                  ${renderDueBadge(lead.dueDate, isDue)}
+                </div>
+              </div>
+            </td>
+
+            <!-- Lead Status Badge -->
+            <td class="py-3 px-3">
+              <div>
+                ${renderStatusBadge(lead.status, isDue)}
+              </div>
+            </td>
+
+            <!-- Response Received Checkbox -->
+            <td class="py-3 px-3 text-center">
+              <label class="inline-flex items-center justify-center cursor-pointer p-1 rounded hover:bg-slate-100">
+                <input 
+                  type="checkbox" 
+                  class="toggle-response-checkbox w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer" 
+                  data-id="${lead.id}" 
+                  ${lead.responseReceived ? 'checked' : ''}
+                />
+              </label>
+              <div class="text-[10px] ${lead.responseReceived ? 'text-emerald-700 font-semibold' : 'text-slate-400'}">
+                ${lead.responseReceived ? 'Yes' : 'No'}
+              </div>
+            </td>
+
+            <!-- Next Step & Notes -->
+            <td class="py-3 px-3">
+              <div class="flex items-start justify-between group cursor-pointer" onclick="openQuickNotesModal('${lead.id}')">
+                <div class="flex-1 pr-1">
+                  <div class="font-medium text-[11px] text-indigo-900 line-clamp-1">
+                    ${lead.nextStep ? `👉 ${escapeHtml(lead.nextStep)}` : '<span class="text-slate-400 italic">No next step set</span>'}
+                  </div>
+                  <div class="text-[11px] text-slate-500 line-clamp-1 mt-0.5">
+                    ${lead.responseNotes ? escapeHtml(lead.responseNotes) : '<span class="text-slate-400">Click to add notes...</span>'}
+                  </div>
+                </div>
+                <button type="button" class="text-slate-400 group-hover:text-indigo-600 p-0.5 rounded opacity-70 group-hover:opacity-100 transition cursor-pointer" title="Edit notes">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                </button>
+              </div>
+            </td>
+
+            <!-- Quick Action Buttons -->
+            <td class="py-3 px-4 text-right whitespace-nowrap">
+              <div class="flex items-center justify-end space-x-1">
+                
+                <!-- Quick Action: Initial Sent Today -->
+                <button 
+                  onclick="markInitialSentToday('${lead.id}')" 
+                  title="Mark Initial Sent Today (+7d Follow-up)" 
+                  class="p-1.5 rounded-lg text-slate-500 hover:text-blue-700 hover:bg-blue-50 transition cursor-pointer"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                  </svg>
+                </button>
+
+                <!-- Quick Action: Follow-up Sent Today -->
+                <button 
+                  onclick="markFollowUpSentToday('${lead.id}')" 
+                  title="Mark Follow-up Sent Today" 
+                  class="p-1.5 rounded-lg text-slate-500 hover:text-indigo-700 hover:bg-indigo-50 transition cursor-pointer"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                  </svg>
+                </button>
+
+                <!-- Edit Lead Modal -->
+                <button 
+                  onclick="openEditLeadModal('${lead.id}')" 
+                  title="Edit prospect" 
+                  class="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition cursor-pointer"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                </button>
+
+                <!-- Delete Lead -->
+                <button 
+                  onclick="confirmDeleteLead('${lead.id}')" 
+                  title="Remove lead" 
+                  class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      if (leadTableBody) leadTableBody.innerHTML = html;
+
+      document.querySelectorAll('.toggle-response-checkbox').forEach(chk => {
+        chk.addEventListener('change', (e) => {
+          const id = e.target.getAttribute('data-id');
+          toggleLeadResponse(id, e.target.checked);
+        });
+      });
+    }
+
+    window.markInitialSentToday = function(id) {
+      const lead = leads.find(l => l.id === id);
+      if (!lead) return;
+
+      const today = getTodayStr();
+      const due = calculateDueDateFrom(today);
+
+      lead.initialDate = today;
+      lead.dueDate = due;
+      lead.status = 'Initial Sent';
+      lead.responseReceived = false;
+
+      persistLeads();
+      render();
+      showToast(`Initial outreach logged today for ${lead.firstName}. Follow-up scheduled in 7 days.`);
+    };
+
+    window.markFollowUpSentToday = function(id) {
+      const lead = leads.find(l => l.id === id);
+      if (!lead) return;
+
+      lead.status = 'Follow-up Sent';
+      if (!lead.nextStep) {
+        lead.nextStep = 'Monitor for reply (final touch)';
+      }
+
+      persistLeads();
+      render();
+      showToast(`Follow-up marked as sent for ${lead.firstName}.`);
+    };
+
+    function toggleLeadResponse(id, isReplied) {
+      const lead = leads.find(l => l.id === id);
+      if (!lead) return;
+
+      lead.responseReceived = isReplied;
+      if (isReplied) {
+        if (lead.status !== 'Won' && lead.status !== 'Lost') {
+          lead.status = 'Responded';
+        }
+        if (!lead.nextStep) {
+          lead.nextStep = 'Book 15-min discovery call';
+        }
+      } else {
+        if (lead.status === 'Responded') {
+          lead.status = lead.initialDate ? 'Initial Sent' : 'Identified';
+        }
+      }
+
+      persistLeads();
+      render();
+      showToast(`Response status updated for ${lead.firstName}`);
+    }
+
+    window.openQuickNotesModal = function(id) {
+      const lead = leads.find(l => l.id === id);
+      if (!lead) return;
+
+      const displayTitle = lead.title ? `${lead.title} ` : '';
+      const displayName = lead.fullName || `${lead.firstName || ''} ${lead.lastName || ''}`.trim();
+
+      if (quickNotesLeadId) quickNotesLeadId.value = lead.id;
+      if (quickNotesProspectName) quickNotesProspectName.textContent = `Notes: ${displayTitle}${displayName} (${lead.company || 'Prospect'})`;
+      if (quickNotesReplied) quickNotesReplied.checked = !!lead.responseReceived;
+      if (quickNotesNextStep) quickNotesNextStep.value = lead.nextStep || '';
+      if (quickNotesText) quickNotesText.value = lead.responseNotes || '';
+
+      if (quickNotesModal) quickNotesModal.classList.remove('hidden');
+    };
+
+    function closeQuickNotes() {
+      if (quickNotesModal) quickNotesModal.classList.add('hidden');
+    }
+
+    if (btnSaveQuickNotes) {
+      btnSaveQuickNotes.addEventListener('click', () => {
+        const id = quickNotesLeadId.value;
+        const lead = leads.find(l => l.id === id);
+        if (!lead) return;
+
+        const wasReplied = lead.responseReceived;
+        const isRepliedNow = quickNotesReplied.checked;
+
+        lead.responseReceived = isRepliedNow;
+        lead.nextStep = quickNotesNextStep.value.trim();
+        lead.responseNotes = quickNotesText.value.trim();
+
+        if (!wasReplied && isRepliedNow && lead.status !== 'Won' && lead.status !== 'Lost') {
+          lead.status = 'Responded';
+        }
+
+        persistLeads();
+        closeQuickNotes();
+        render();
+        showToast('Prospect notes updated');
+      });
+    }
+
+    if (btnCloseQuickNotes) btnCloseQuickNotes.addEventListener('click', closeQuickNotes);
+    if (btnCancelQuickNotes) btnCancelQuickNotes.addEventListener('click', closeQuickNotes);
+
+    function openAddLeadModal() {
+      if (formLeadId) formLeadId.value = '';
+      if (modalTitle) modalTitle.textContent = 'Add New Prospect';
+      if (leadForm) leadForm.reset();
+
+      populateAllDropdownsFromMaster();
+
+      selectedFormProgrammes = new Set([masterConfig.programmes[0] || 'Leadership']);
+      renderModalProgrammePills();
+
+      if (personTitleSelect) personTitleSelect.value = '';
+      if (leadSourceSelect) leadSourceSelect.value = masterConfig.sources[0] || 'LinkedIn Outreach';
+      const relScore = document.getElementById('relevancyScore');
+      if (relScore) relScore.value = '4';
+      if (leadStatusSelect) leadStatusSelect.value = masterConfig.statuses[0] || 'Identified';
+
+      const nextStepInput = document.getElementById('nextStep');
+      if (nextStepInput) nextStepInput.value = '';
+
+      if (leadModal) leadModal.classList.remove('hidden');
+      const fullNameInput = document.getElementById('fullName');
+      if (fullNameInput) fullNameInput.focus();
+    }
+
+    window.openEditLeadModal = function(id) {
+      const lead = leads.find(l => l.id === id);
+      if (!lead) return;
+
+      populateAllDropdownsFromMaster();
+
+      if (formLeadId) formLeadId.value = lead.id;
+      if (modalTitle) modalTitle.textContent = 'Edit Prospect Details';
+
+      if (personTitleSelect) personTitleSelect.value = lead.title || '';
+
+      const fullNameEl = document.getElementById('fullName');
+      if (fullNameEl) fullNameEl.value = lead.fullName || `${lead.firstName || ''} ${lead.lastName || ''}`.trim();
+
+      document.getElementById('firstName').value = lead.firstName || '';
+      document.getElementById('lastName').value = lead.lastName || '';
+      document.getElementById('jobRole').value = lead.position || lead.role || '';
+      document.getElementById('companyName').value = lead.company || '';
+      document.getElementById('linkedinUrl').value = lead.linkedinUrl || '';
+      
+      if (lead.source && !masterConfig.sources.includes(lead.source)) {
+        masterConfig.sources.push(lead.source);
+        saveMasterConfig();
+      }
+      if (leadSourceSelect) leadSourceSelect.value = lead.source || masterConfig.sources[0];
+
+      const currentProgs = getLeadProgrammes(lead);
+      selectedFormProgrammes = new Set(currentProgs);
+      currentProgs.forEach(p => {
+        if (p && !masterConfig.programmes.includes(p)) {
+          masterConfig.programmes.push(p);
+        }
+      });
+      saveMasterConfig();
+      renderModalProgrammePills();
+
+      document.getElementById('relevancyScore').value = lead.relevancyScore || '3';
+      if (leadStatusSelect) leadStatusSelect.value = lead.status || 'Identified';
+      document.getElementById('initialDate').value = lead.initialDate || '';
+      document.getElementById('dueDate').value = lead.dueDate || '';
+      document.getElementById('responseReceived').checked = !!lead.responseReceived;
+      document.getElementById('nextStep').value = lead.nextStep || '';
+      document.getElementById('responseNotes').value = lead.responseNotes || '';
+
+      if (leadModal) leadModal.classList.remove('hidden');
+    };
+
+    const fullNameInputEl = document.getElementById('fullName');
+    if (fullNameInputEl) {
+      fullNameInputEl.addEventListener('input', (e) => {
+        const val = e.target.value.trim();
+        const fNameInput = document.getElementById('firstName');
+        const lNameInput = document.getElementById('lastName');
+        if (val && (!fNameInput.value || fNameInput.dataset.autofilled === 'true')) {
+          const parts = val.split(/\s+/);
+          fNameInput.value = parts[0] || '';
+          fNameInput.dataset.autofilled = 'true';
+          lNameInput.value = parts.slice(1).join(' ') || '';
+          lNameInput.dataset.autofilled = 'true';
+        }
+      });
+    }
+
+    const fNameInputEl = document.getElementById('firstName');
+    const lNameInputEl = document.getElementById('lastName');
+    [fNameInputEl, lNameInputEl].forEach(input => {
+      if (input) {
+        input.addEventListener('input', () => {
+          input.dataset.autofilled = 'false';
+          const fullInput = document.getElementById('fullName');
+          if (fullInput && (!fullInput.value || fullInput.dataset.autofilled === 'true')) {
+            const combined = [fNameInputEl.value.trim(), lNameInputEl.value.trim()].filter(Boolean).join(' ');
+            fullInput.value = combined;
+            fullInput.dataset.autofilled = 'true';
+          }
+        });
+      }
+    });
+
+    function closeLeadModal() {
+      if (leadModal) leadModal.classList.add('hidden');
+    }
+
+    const btnAddCustom = document.getElementById('btnAddCustomProgramme');
+    if (btnAddCustom) {
+      btnAddCustom.addEventListener('click', () => {
+        const customInput = document.getElementById('customProgrammeInput');
+        const val = customInput.value.trim();
+        if (!val) return;
+
+        if (!masterConfig.programmes.includes(val)) {
+          masterConfig.programmes.push(val);
+          saveMasterConfig();
+        }
+        selectedFormProgrammes.add(val);
+        renderModalProgrammePills();
+        customInput.value = '';
+      });
+    }
+
+    const customInput = document.getElementById('customProgrammeInput');
+    if (customInput) {
+      customInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (btnAddCustom) btnAddCustom.click();
+        }
+      });
+    }
+
+    if (initialDateInput) {
+      initialDateInput.addEventListener('change', (e) => {
+        const val = e.target.value;
+        if (val && dueDateInput) {
+          dueDateInput.value = calculateDueDateFrom(val);
+          const statusSelect = document.getElementById('leadStatus');
+          if (statusSelect && (statusSelect.value === 'Identified' || statusSelect.value === 'Scored')) {
+            statusSelect.value = 'Initial Sent';
+          }
+        }
+      });
+    }
+
+    if (btnSetInitialToday) {
+      btnSetInitialToday.addEventListener('click', () => {
+        const today = getTodayStr();
+        if (initialDateInput) initialDateInput.value = today;
+        if (dueDateInput) dueDateInput.value = calculateDueDateFrom(today);
+        const statusSelect = document.getElementById('leadStatus');
+        if (statusSelect && (statusSelect.value === 'Identified' || statusSelect.value === 'Scored')) {
+          statusSelect.value = 'Initial Sent';
+        }
+      });
+    }
+
+    if (leadForm) {
+      leadForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const id = formLeadId.value || 'ld_' + Date.now();
+        const isEdit = !!formLeadId.value;
+
+        const chosenProgrammes = Array.from(selectedFormProgrammes);
+        if (chosenProgrammes.length === 0) {
+          chosenProgrammes.push(masterConfig.programmes[0] || 'Leadership');
+        }
+
+        const assignedRole = document.getElementById('jobRole').value.trim();
+        if (assignedRole && !masterConfig.roles.includes(assignedRole)) {
+          masterConfig.roles.push(assignedRole);
+          saveMasterConfig();
+        }
+
+        const personTitle = (document.getElementById('personTitle')?.value || '').trim();
+        if (personTitle && !masterConfig.titles.includes(personTitle)) {
+          masterConfig.titles.push(personTitle);
+          saveMasterConfig();
+        }
+
+        const chosenNextStep = document.getElementById('nextStep').value.trim();
+        if (chosenNextStep && !masterConfig.nextActions.includes(chosenNextStep)) {
+          masterConfig.nextActions.push(chosenNextStep);
+          saveMasterConfig();
+        }
+
+        let fullNameVal = (document.getElementById('fullName')?.value || '').trim();
+        const firstNameVal = document.getElementById('firstName').value.trim();
+        const lastNameVal = document.getElementById('lastName').value.trim();
+
+        if (!fullNameVal) {
+          fullNameVal = [firstNameVal, lastNameVal].filter(Boolean).join(' ');
+        }
+
+        const leadData = {
+          id: id,
+          title: personTitle,
+          fullName: fullNameVal,
+          firstName: firstNameVal,
+          lastName: lastNameVal,
+          role: assignedRole,
+          position: assignedRole,
+          company: document.getElementById('companyName').value.trim(),
+          source: document.getElementById('leadSource').value,
+          linkedinUrl: document.getElementById('linkedinUrl').value.trim(),
+          targetProgrammes: chosenProgrammes,
+          targetProgramme: chosenProgrammes.join('; '),
+          relevancyScore: parseInt(document.getElementById('relevancyScore').value) || 3,
+          status: document.getElementById('leadStatus').value,
+          initialDate: document.getElementById('initialDate').value,
+          dueDate: document.getElementById('dueDate').value,
+          responseReceived: document.getElementById('responseReceived').checked,
+          nextStep: chosenNextStep,
+          responseNotes: document.getElementById('responseNotes').value.trim()
+        };
+
+        if (isEdit) {
+          const index = leads.findIndex(l => l.id === id);
+          if (index !== -1) {
+            leads[index] = leadData;
+          }
+        } else {
+          leads.unshift(leadData);
+        }
+
+        persistLeads();
+        closeLeadModal();
+        render();
+        showToast(isEdit ? 'Lead updated successfully' : 'New prospect added to pipeline');
+      });
+    }
+
+    if (btnOpenAddModal) btnOpenAddModal.addEventListener('click', openAddLeadModal);
+    if (btnCloseModal) btnCloseModal.addEventListener('click', closeLeadModal);
+    if (btnCancelModal) btnCancelModal.addEventListener('click', closeLeadModal);
+    const btnEmptyAdd = document.getElementById('btnEmptyAddLead');
+    if (btnEmptyAdd) btnEmptyAdd.addEventListener('click', openAddLeadModal);
+
+    window.confirmDeleteLead = function(id) {
+      const lead = leads.find(l => l.id === id);
+      if (!lead) return;
+
+      document.getElementById('confirmTitle').textContent = `Delete ${lead.firstName} ${lead.lastName}?`;
+      document.getElementById('confirmMessage').textContent = `Are you sure you want to permanently remove this lead from ${lead.company || 'your database'}?`;
+
+      pendingConfirmAction = () => {
+        leads = leads.filter(l => l.id !== id);
+        persistLeads();
+        render();
+        showToast('Prospect removed');
+      };
+
+      if (confirmDialog) confirmDialog.classList.remove('hidden');
+    };
+
+    if (confirmCancelBtn) {
+      confirmCancelBtn.addEventListener('click', () => {
+        if (confirmDialog) confirmDialog.classList.add('hidden');
+        pendingConfirmAction = null;
+      });
+    }
+
+    if (confirmProceedBtn) {
+      confirmProceedBtn.addEventListener('click', () => {
+        if (pendingConfirmAction) pendingConfirmAction();
+        if (confirmDialog) confirmDialog.classList.add('hidden');
+        pendingConfirmAction = null;
+      });
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        if (clearSearchBtn) clearSearchBtn.classList.toggle('hidden', searchQuery.length === 0);
+        render();
+      });
+    }
+
+    if (clearSearchBtn) {
+      clearSearchBtn.addEventListener('click', () => {
+        if (searchInput) searchInput.value = '';
+        searchQuery = '';
+        clearSearchBtn.classList.add('hidden');
+        render();
+      });
+    }
+
+    if (filterSource) {
+      filterSource.addEventListener('change', (e) => {
+        sourceFilter = e.target.value;
+        render();
+      });
+    }
+
+    if (filterProgramme) {
+      filterProgramme.addEventListener('change', (e) => {
+        programmeFilter = e.target.value;
+        render();
+      });
+    }
+
+    if (filterScore) {
+      filterScore.addEventListener('change', (e) => {
+        scoreFilter = e.target.value;
+        render();
+      });
+    }
+
+    statusTabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        statusTabBtns.forEach(b => {
+          b.classList.remove('active', 'bg-slate-900', 'text-white');
+          if (b.dataset.statusFilter === 'DUE') {
+            b.className = 'status-tab-btn px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 border border-amber-300 hover:bg-amber-100 transition shrink-0 flex items-center gap-1 cursor-pointer';
+          } else {
+            b.className = 'status-tab-btn px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition shrink-0 cursor-pointer';
+          }
+        });
+
+        btn.classList.add('active', 'bg-slate-900', 'text-white');
+        btn.classList.remove('bg-slate-100', 'text-slate-600', 'bg-amber-50', 'text-amber-800', 'border-amber-300');
+
+        currentFilter = btn.getAttribute('data-status-filter');
+        render();
+      });
+    });
+
+    window.filterByDueFollowups = function() {
+      const dueTab = document.querySelector('[data-status-filter="DUE"]');
+      if (dueTab) dueTab.click();
+    };
+
+    function resetAllFilters() {
+      searchQuery = '';
+      if (searchInput) searchInput.value = '';
+      if (clearSearchBtn) clearSearchBtn.classList.add('hidden');
+      sourceFilter = 'ALL';
+      if (filterSource) filterSource.value = 'ALL';
+      programmeFilter = 'ALL';
+      if (filterProgramme) filterProgramme.value = 'ALL';
+      scoreFilter = 'ALL';
+      if (filterScore) filterScore.value = 'ALL';
+
+      const allTab = document.querySelector('[data-status-filter="ALL"]');
+      if (allTab) allTab.click();
+    }
+
+    const btnReset = document.getElementById('btnResetFilters');
+    if (btnReset) btnReset.addEventListener('click', resetAllFilters);
+    const btnClearInEmpty = document.getElementById('btnClearFiltersInEmpty');
+    if (btnClearInEmpty) btnClearInEmpty.addEventListener('click', resetAllFilters);
+
+    const btnExport = document.getElementById('btnExportCsv');
+    if (btnExport) {
+      btnExport.addEventListener('click', () => {
+        if (!leads || leads.length === 0) {
+          showToast('No lead data available to export', true);
+          return;
+        }
+
+        const headers = [
+          'ID',
+          'Title',
+          'Full Name',
+          'First Name',
+          'Last Name',
+          'Position',
+          'Company',
+          'Lead Source',
+          'LinkedIn URL',
+          'Target Programmes',
+          'Relevancy Score',
+          'Lead Status',
+          'Initial Message Date',
+          'Follow-up Due Date',
+          'Response Received',
+          'Next Step',
+          'Response Notes'
+        ];
+
+        const csvRows = [];
+        csvRows.push(headers.join(','));
+
+        leads.forEach(lead => {
+          const row = [
+            lead.id || '',
+            cleanCsvCell(lead.title || ''),
+            cleanCsvCell(lead.fullName || `${lead.firstName || ''} ${lead.lastName || ''}`.trim()),
+            cleanCsvCell(lead.firstName || ''),
+            cleanCsvCell(lead.lastName || ''),
+            cleanCsvCell(lead.position || lead.role || ''),
+            cleanCsvCell(lead.company || ''),
+            cleanCsvCell(lead.source || 'LinkedIn Outreach'),
+            cleanCsvCell(lead.linkedinUrl || ''),
+            cleanCsvCell(getLeadProgrammes(lead).join('; ')),
+            lead.relevancyScore || '',
+            cleanCsvCell(lead.status || ''),
+            lead.initialDate || '',
+            lead.dueDate || '',
+            lead.responseReceived ? 'TRUE' : 'FALSE',
+            cleanCsvCell(lead.nextStep || ''),
+            cleanCsvCell(lead.responseNotes || '')
+          ];
+          csvRows.push(row.join(','));
+        });
+
+        const csvString = csvRows.join('\r\n');
+        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const dateStr = getTodayStr();
+
+        link.setAttribute('href', url);
+        link.setAttribute('download', `Corporate_Training_Leads_${dateStr}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        showToast(`Exported ${leads.length} leads to CSV`);
+      });
+    }
+
+    function cleanCsvCell(val) {
+      if (val === null || val === undefined) return '""';
+      let stringVal = String(val);
+      stringVal = stringVal.replace(/"/g, '""');
+      return `"${stringVal}"`;
+    }
+
+    function downloadCorporateTemplate() {
+      const templateData = [
+        {
+          "Title": "Dr",
+          "Full Name": "Alexander Montgomery Wright",
+          "First Name": "Alexander",
+          "Last Name": "Wright",
+          "Position": "Chief Learning Officer",
+          "Company": "Vertex Global Finance",
+          "Lead Source": "LinkedIn Outreach",
+          "LinkedIn URL": "https://linkedin.com/in/alexander-wright",
+          "Target Programmes": "Leadership; Sales Mastery",
+          "Relevancy Score": 5,
+          "Lead Status": "Initial Sent",
+          "Initial Message Date": getRelativeDateStr(-2),
+          "Follow-up Due Date": getRelativeDateStr(5),
+          "Response Received": "FALSE",
+          "Next Step": "Send 1-page programme framework",
+          "Response Notes": "150 enterprise team leads under management"
+        },
+        {
+          "Title": "Ms",
+          "Full Name": "Rachel Soo-Jin Kim",
+          "First Name": "Rachel",
+          "Last Name": "Kim",
+          "Position": "VP People Operations",
+          "Company": "Solis Cloud Health",
+          "Lead Source": "Referral / Word of Mouth",
+          "LinkedIn URL": "https://linkedin.com/in/rachel-kim-vp",
+          "Target Programmes": "Project Management",
+          "Relevancy Score": 4,
+          "Lead Status": "Responded",
+          "Initial Message Date": getRelativeDateStr(-10),
+          "Follow-up Due Date": getRelativeDateStr(-3),
+          "Response Received": "TRUE",
+          "Next Step": "Book 15-min discovery call",
+          "Response Notes": "Looking for Q4 agile training cohort"
+        }
+      ];
+
+      try {
+        if (typeof XLSX !== 'undefined') {
+          const ws = XLSX.utils.json_to_sheet(templateData);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, "Lead_Template");
+          XLSX.writeFile(wb, "Corporate_Training_Lead_Template.xlsx");
+          showToast('Template downloaded: Corporate_Training_Lead_Template.xlsx');
+          return;
+        }
+      } catch (err) {
+        console.warn('XLSX writing error, falling back to CSV', err);
+      }
+
+      // CSV Fallback
+      const headers = Object.keys(templateData[0]);
+      const csvRows = [headers.join(',')];
+      templateData.forEach(row => {
+        csvRows.push(headers.map(h => cleanCsvCell(row[h])).join(','));
+      });
+      const blob = new Blob([csvRows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "Corporate_Training_Lead_Template.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Template downloaded (CSV format)');
+    }
+
+    if (btnDownloadTemplate) btnDownloadTemplate.addEventListener('click', downloadCorporateTemplate);
+    if (btnDownloadTemplateInModal) btnDownloadTemplateInModal.addEventListener('click', downloadCorporateTemplate);
+
+    function openImportModal() {
+      parsedImportLeads = [];
+      if (fileImportInput) fileImportInput.value = '';
+      if (importFileDetails) importFileDetails.classList.add('hidden');
+      if (btnExecuteImport) btnExecuteImport.disabled = true;
+      if (importModal) importModal.classList.remove('hidden');
+    }
+
+    function closeImportModal() {
+      if (importModal) importModal.classList.add('hidden');
+    }
+
+    if (btnOpenImportModal) btnOpenImportModal.addEventListener('click', openImportModal);
+    if (btnCloseImportModal) btnCloseImportModal.addEventListener('click', closeImportModal);
+    if (btnCancelImportModal) btnCancelImportModal.addEventListener('click', closeImportModal);
+
+    if (dropZone && fileImportInput) {
+      dropZone.addEventListener('click', () => fileImportInput.click());
+      
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('border-indigo-600', 'bg-indigo-50/50');
+      });
+
+      dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('border-indigo-600', 'bg-indigo-50/50');
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-indigo-600', 'bg-indigo-50/50');
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          processSpreadsheetFile(e.dataTransfer.files[0]);
+        }
+      });
+
+      fileImportInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          processSpreadsheetFile(e.target.files[0]);
+        }
+      });
+    }
+
+    if (btnRemoveImportFile) {
+      btnRemoveImportFile.addEventListener('click', () => {
+        parsedImportLeads = [];
+        if (fileImportInput) fileImportInput.value = '';
+        if (importFileDetails) importFileDetails.classList.add('hidden');
+        if (btnExecuteImport) btnExecuteImport.disabled = true;
+      });
+    }
+
+    function processSpreadsheetFile(file) {
+      if (!file) return;
+
+      const fileName = file.name;
+      const isXls = fileName.endsWith('.xlsx') || fileName.endsWith('.xls');
+      const isCsv = fileName.endsWith('.csv');
+
+      if (!isXls && !isCsv) {
+        showToast('Please select a valid Excel (.xlsx, .xls) or CSV (.csv) file', true);
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        try {
+          const data = e.target.result;
+          let jsonRows = [];
+
+          if (typeof XLSX !== 'undefined') {
+            const workbook = XLSX.read(data, { type: 'binary', cellDates: true });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            jsonRows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+          } else {
+            showToast('Spreadsheet parser loading... please retry in a second', true);
+            return;
+          }
+
+          if (!jsonRows || jsonRows.length === 0) {
+            showToast('The selected file contains no readable rows', true);
+            return;
+          }
+
+          parsedImportLeads = normalizeImportedRows(jsonRows);
+
+          if (parsedImportLeads.length === 0) {
+            showToast('No valid leads could be recognized. Check column headers.', true);
+            return;
+          }
+
+          if (importFileName) importFileName.textContent = fileName;
+          if (importFileStats) importFileStats.textContent = `${parsedImportLeads.length} valid prospect rows ready to import`;
+          if (importFileDetails) importFileDetails.classList.remove('hidden');
+          if (btnExecuteImport) btnExecuteImport.disabled = false;
+
+        } catch (err) {
+          console.error('File parsing failure', err);
+          showToast('Failed to parse spreadsheet. Ensure it is not corrupted.', true);
+        }
+      };
+
+      reader.readAsBinaryString(file);
+    }
+
+    function normalizeImportedRows(rows) {
+      const results = [];
+
+      rows.forEach((row, idx) => {
+        const getVal = (possibleKeys) => {
+          for (const key of possibleKeys) {
+            for (const rowKey of Object.keys(row)) {
+              if (rowKey.trim().toLowerCase() === key.toLowerCase()) {
+                const val = row[rowKey];
+                if (val instanceof Date) {
+                  return formatDateToISO(val);
+                }
+                return String(val || '').trim();
+              }
+            }
+          }
+          return '';
+        };
+
+        const personTitle = getVal(['Title', 'Salutation', 'Prefix', 'Honorific']);
+        let fullName = getVal(['Full Name', 'FullName', 'Name', 'Prospect Name', 'Contact Name']);
+        let firstName = getVal(['First Name', 'FirstName', 'First', 'First_Name']);
+        let lastName = getVal(['Last Name', 'LastName', 'Last', 'Last_Name', 'Surname']);
+
+        if (!fullName && (firstName || lastName)) {
+          fullName = [firstName, lastName].filter(Boolean).join(' ');
+        } else if (fullName && (!firstName || !lastName)) {
+          const parts = fullName.split(' ').filter(Boolean);
+          firstName = parts[0] || '';
+          lastName = parts.slice(1).join(' ') || '';
+        }
+
+        const company = getVal(['Company', 'Company Name', 'Organisation', 'Organization', 'Employer']);
+        const role = getVal(['Position', 'Role', 'Role / Title', 'Title', 'Job Title', 'Job Position']);
+
+        if (!fullName && !company) return;
+
+        let source = getVal(['Lead Source', 'Source', 'Channel']) || 'LinkedIn Outreach';
+        let programmesRaw = getVal(['Target Programmes', 'Target Programme', 'Programme', 'Programmes', 'Program']);
+        let scoreVal = parseInt(getVal(['Relevancy Score', 'Relevancy', 'Score', 'Stars'])) || 3;
+        if (scoreVal < 1) scoreVal = 1;
+        if (scoreVal > 5) scoreVal = 5;
+
+        let status = getVal(['Lead Status', 'Status']) || 'Identified';
+        let initialDate = getVal(['Initial Message Date', 'Initial Date', 'InitialSentDate', 'Initial Date Sent']);
+        let dueDate = getVal(['Follow-up Due Date', 'Follow-up Due', 'Due Date', 'DueDate']);
+
+        if (initialDate && !dueDate) {
+          dueDate = calculateDueDateFrom(initialDate);
+        }
+
+        const repliedRaw = getVal(['Response Received?', 'Response Received', 'Replied', 'Responded?']).toLowerCase();
+        const responseReceived = repliedRaw === 'true' || repliedRaw === 'yes' || repliedRaw === '1' || status === 'Responded' || status === 'Won';
+
+        const nextStep = getVal(['Next Step', 'Next Actions', 'NextStep', 'Next Action']);
+        const responseNotes = getVal(['Response Notes', 'Notes', 'Conversation Summary', 'Conversation']);
+        const linkedinUrl = getVal(['LinkedIn URL', 'LinkedIn', 'Profile URL', 'URL']);
+
+        let targetProgrammes = [];
+        if (programmesRaw) {
+          targetProgrammes = programmesRaw.split(/[;,|]/).map(s => s.trim()).filter(Boolean);
+        }
+        if (targetProgrammes.length === 0) {
+          targetProgrammes = [masterConfig.programmes[0] || 'Leadership'];
+        }
+
+        if (personTitle && !masterConfig.titles.includes(personTitle)) masterConfig.titles.push(personTitle);
+        if (source && !masterConfig.sources.includes(source)) masterConfig.sources.push(source);
+        targetProgrammes.forEach(p => {
+          if (p && !masterConfig.programmes.includes(p)) masterConfig.programmes.push(p);
+        });
+        if (role && !masterConfig.roles.includes(role)) masterConfig.roles.push(role);
+        if (status && !masterConfig.statuses.includes(status)) masterConfig.statuses.push(status);
+        if (nextStep && !masterConfig.nextActions.includes(nextStep)) masterConfig.nextActions.push(nextStep);
+
+        results.push({
+          id: getVal(['id', 'ID']) || ('ld_imp_' + Date.now() + '_' + idx),
+          title: personTitle,
+          fullName: fullName || 'Unnamed',
+          firstName: firstName || 'Unnamed',
+          lastName: lastName || '',
+          role: role || 'Position unlisted',
+          position: role || 'Position unlisted',
+          company: company || 'Company unlisted',
+          source: source,
+          linkedinUrl: linkedinUrl,
+          targetProgrammes: targetProgrammes,
+          targetProgramme: targetProgrammes.join('; '),
+          relevancyScore: scoreVal,
+          status: status,
+          initialDate: initialDate,
+          dueDate: dueDate,
+          responseReceived: responseReceived,
+          nextStep: nextStep,
+          responseNotes: responseNotes
+        });
+      });
+
+      return results;
+    }
+
+    if (btnExecuteImport) {
+      btnExecuteImport.addEventListener('click', () => {
+        if (!parsedImportLeads || parsedImportLeads.length === 0) {
+          showToast('No leads to import', true);
+          return;
+        }
+
+        const modeEl = document.querySelector('input[name="importMode"]:checked');
+        const mode = modeEl ? modeEl.value : 'append';
+
+        if (mode === 'replace') {
+          leads = [...parsedImportLeads];
+        } else {
+          leads = [...parsedImportLeads, ...leads];
+        }
+
+        saveMasterConfig();
+        persistLeads(true);
+        closeImportModal();
+        render();
+        showToast(`Successfully imported ${parsedImportLeads.length} leads!`);
+      });
+    }
+
+    function openSheetsModal() {
+      if (inputSheetsWebAppUrl) inputSheetsWebAppUrl.value = sheetsConfig.webAppUrl || '';
+      if (inputSheetsDocUrl) inputSheetsDocUrl.value = sheetsConfig.docUrl || '';
+      if (chkAutoSyncSheets) chkAutoSyncSheets.checked = sheetsConfig.autoSync !== false;
+      updateSheetsUIStatus();
+      if (sheetsModal) sheetsModal.classList.remove('hidden');
+    }
+
+    function closeSheetsModal() {
+      if (sheetsModal) sheetsModal.classList.add('hidden');
+    }
+
+    if (btnOpenSheetsModal) btnOpenSheetsModal.addEventListener('click', openSheetsModal);
+    if (btnEmptyConnectSheets) btnEmptyConnectSheets.addEventListener('click', openSheetsModal);
+    if (btnCloseSheetsModal) btnCloseSheetsModal.addEventListener('click', closeSheetsModal);
+    if (btnCancelSheetsModal) btnCancelSheetsModal.addEventListener('click', closeSheetsModal);
+
+    if (btnCopyAppsScript && appsScriptCodeBlock) {
+      btnCopyAppsScript.addEventListener('click', () => {
+        const text = appsScriptCodeBlock.innerText;
+        try {
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          btnCopyAppsScript.textContent = 'Copied!';
+          setTimeout(() => { btnCopyAppsScript.textContent = 'Copy Script'; }, 2000);
+          showToast('Apps Script code copied to clipboard!');
+        } catch (e) {
+          showToast('Failed to copy automatically. Please copy the code manually.', true);
+        }
+      });
+    }
+
+    if (btnSaveAndPushSheets) {
+      btnSaveAndPushSheets.addEventListener('click', async () => {
+        const url = (inputSheetsWebAppUrl.value || '').trim();
+        if (!url) {
+          showToast('Please paste your Google Apps Script Web App URL', true);
+          return;
+        }
+
+        btnSaveAndPushSheets.disabled = true;
+        btnSaveAndPushSheets.textContent = 'Connecting...';
+
+        sheetsConfig.webAppUrl = url;
+        sheetsConfig.docUrl = (inputSheetsDocUrl.value || '').trim();
+        sheetsConfig.autoSync = chkAutoSyncSheets ? chkAutoSyncSheets.checked : true;
+
+        const success = await syncPushToGoogleSheets(leads, false);
+        btnSaveAndPushSheets.disabled = false;
+        btnSaveAndPushSheets.textContent = 'Connect & Push Leads';
+
+        if (success) {
+          saveSheetsConfig();
+          showToast('Google Sheet connected! All leads pushed successfully.');
+          closeSheetsModal();
+        } else {
+          showToast('Could not reach Google Sheets. Make sure "Who has access" is set to "Anyone"', true);
+        }
+      });
+    }
+
+    if (btnTestPullSheets) {
+      btnTestPullSheets.addEventListener('click', async () => {
+        const url = (inputSheetsWebAppUrl.value || '').trim();
+        if (!url) {
+          showToast('Please enter your Web App URL first', true);
+          return;
+        }
+        sheetsConfig.webAppUrl = url;
+        sheetsConfig.docUrl = (inputSheetsDocUrl.value || '').trim();
+        saveSheetsConfig();
+
+        btnTestPullSheets.disabled = true;
+        btnTestPullSheets.textContent = 'Pulling...';
+        const ok = await pullFromGoogleSheets(true);
+        btnTestPullSheets.disabled = false;
+        btnTestPullSheets.textContent = 'Pull from Sheet';
+
+        if (ok) {
+          closeSheetsModal();
+        }
+      });
+    }
+
+    if (btnDisconnectSheets) {
+      btnDisconnectSheets.addEventListener('click', () => {
+        sheetsConfig.webAppUrl = '';
+        sheetsConfig.docUrl = '';
+        sheetsConfig.isConnected = false;
+        saveSheetsConfig();
+        if (inputSheetsWebAppUrl) inputSheetsWebAppUrl.value = '';
+        if (inputSheetsDocUrl) inputSheetsDocUrl.value = '';
+        showToast('Google Sheets disconnected. Using local database.');
+        closeSheetsModal();
+      });
+    }
+
+    if (btnManualSync) {
+      btnManualSync.addEventListener('click', async () => {
+        if (!sheetsConfig.webAppUrl) {
+          openSheetsModal();
+          return;
+        }
+        showToast('Synchronizing with Google Sheet...');
+        await pullFromGoogleSheets(true);
+      });
+    }
+
+    function getDueLeadsList() {
+      return leads.filter(l => isLeadFollowUpDue(l));
+    }
+
+    function openEmailDigestModal() {
+      const dueList = getDueLeadsList();
+      const savedEmail = localStorage.getItem(EMAIL_CONFIG_KEY) || '';
+      if (inputDigestRecipientEmail) inputDigestRecipientEmail.value = savedEmail;
+      if (digestDueCountBadge) digestDueCountBadge.textContent = dueList.length;
+      if (digestTodayDate) digestTodayDate.textContent = `Today: ${getTodayStr()}`;
+
+      if (digestDuePreviewList) {
+        if (dueList.length === 0) {
+          digestDuePreviewList.innerHTML = `
+            <div class="py-6 text-center text-slate-400">
+              <span class="text-2xl block mb-1">🎉</span>
+              <p class="font-semibold text-slate-600">No follow-ups currently due!</p>
+              <p class="text-[11px]">All prospects are up to date or marked as responded.</p>
+            </div>
+          `;
+        } else {
+          digestDuePreviewList.innerHTML = dueList.map(l => {
+            const title = l.title ? `${l.title} ` : '';
+            const name = l.fullName || `${l.firstName || ''} ${l.lastName || ''}`.trim();
+            return `
+              <div class="p-2.5 bg-white border border-slate-200 rounded-lg flex items-center justify-between gap-2 shadow-2xs">
+                <div>
+                  <div class="font-semibold text-slate-900">${escapeHtml(title + name)}</div>
+                  <div class="text-[11px] text-slate-500">${escapeHtml(l.position || '')} • <strong class="text-slate-700">${escapeHtml(l.company || '')}</strong></div>
+                  <div class="text-[11px] text-indigo-700 mt-0.5">${l.nextStep ? `👉 ${escapeHtml(l.nextStep)}` : 'Follow up required'}</div>
+                </div>
+                <div class="text-right shrink-0">
+                  <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold text-amber-900 bg-amber-100 border border-amber-300">
+                    Due: ${l.dueDate || 'Today'}
+                  </span>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      if (emailDigestModal) emailDigestModal.classList.remove('hidden');
+    }
+
+    function closeEmailDigestModal() {
+      if (emailDigestModal) emailDigestModal.classList.add('hidden');
+    }
+
+    if (btnOpenEmailDigestModal) btnOpenEmailDigestModal.addEventListener('click', openEmailDigestModal);
+    if (btnCardEmailDigest) btnCardEmailDigest.addEventListener('click', openEmailDigestModal);
+    if (btnBarEmailDigest) btnBarEmailDigest.addEventListener('click', openEmailDigestModal);
+    if (btnCloseEmailDigestModal) btnCloseEmailDigestModal.addEventListener('click', closeEmailDigestModal);
+    if (btnCancelEmailDigest) btnCancelEmailDigest.addEventListener('click', closeEmailDigestModal);
+
+    // 1. Send via Google Apps Script (Live Email Dispatch)
+    if (btnSendDigestNow) {
+      btnSendDigestNow.addEventListener('click', async () => {
+        const recipient = (inputDigestRecipientEmail.value || '').trim();
+        if (!recipient || !recipient.includes('@')) {
+          showToast('Please enter a valid recipient email address', true);
+          return;
+        }
+
+        localStorage.setItem(EMAIL_CONFIG_KEY, recipient);
+        const dueList = getDueLeadsList();
+
+        if (!sheetsConfig.webAppUrl || !sheetsConfig.webAppUrl.trim()) {
+          showToast('Google Sheets backend not connected yet. Use "Open in Mail App" or connect Sheets in top bar.', true);
+          return;
+        }
+
+        btnSendDigestNow.disabled = true;
+        if (sendDigestIcon) sendDigestIcon.classList.add('animate-spin');
+        btnSendDigestNow.classList.add('opacity-75');
+
+        try {
+          const payload = {
+            action: 'send_digest',
+            recipientEmail: recipient,
+            dueLeads: dueList,
+            todayDate: getTodayStr()
+          };
+
+          const res = await fetch(sheetsConfig.webAppUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+          });
+
+          const result = await res.json();
+          if (result.status === 'success') {
+            showToast(`Email digest sent to ${recipient}!`);
+            closeEmailDigestModal();
+          } else {
+            throw new Error(result.message || 'Apps Script returned an error');
+          }
+        } catch (err) {
+          console.error('Email digest error', err);
+          showToast(`Direct send failed: ${err.message}. (Opening your mail app fallback...)`, true);
+          openMailtoDigest();
+        } finally {
+          btnSendDigestNow.disabled = false;
+          if (sendDigestIcon) sendDigestIcon.classList.remove('animate-spin');
+          btnSendDigestNow.classList.remove('opacity-75');
+        }
+      });
+    }
+
+    // 2. Open via Native Email App (mailto: fallback)
+    function openMailtoDigest() {
+      const recipient = (inputDigestRecipientEmail.value || '').trim();
+      if (recipient) localStorage.setItem(EMAIL_CONFIG_KEY, recipient);
+
+      const dueList = getDueLeadsList();
+      const subject = encodeURIComponent(`📋 LinkedIn Outreach: ${dueList.length} Follow-up(s) Due Today (${getTodayStr()})`);
+      
+      let bodyText = `Hi,\n\nHere is your daily corporate training outreach follow-up digest for ${getTodayStr()}:\n\n`;
+      if (dueList.length === 0) {
+        bodyText += `All caught up! No follow-ups are currently due today.\n`;
+      } else {
+        dueList.forEach((ld, idx) => {
+          const name = (ld.title ? ld.title + ' ' : '') + (ld.fullName || ld.firstName);
+          bodyText += `${idx + 1}. ${name}\n`;
+          bodyText += `   Company: ${ld.company || 'N/A'}\n`;
+          bodyText += `   Position: ${ld.position || ld.role || 'N/A'}\n`;
+          bodyText += `   Due Date: ${ld.dueDate || 'Today'}\n`;
+          bodyText += `   Next Step: ${ld.nextStep || 'Follow up'}\n`;
+          if (ld.linkedinUrl) bodyText += `   LinkedIn: ${ld.linkedinUrl}\n`;
+          bodyText += `\n`;
+        });
+      }
+
+      bodyText += `\n—\nGenerated by LeadPulse Pipeline CRM`;
+      const mailtoUrl = `mailto:${encodeURIComponent(recipient)}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
+      window.location.href = mailtoUrl;
+      showToast('Opened follow-up digest in your email client');
+    }
+
+    if (btnOpenMailtoDigest) {
+      btnOpenMailtoDigest.addEventListener('click', openMailtoDigest);
+    }
+
+    const btnSeed = document.getElementById('btnSeedSample');
+    if (btnSeed) {
+      btnSeed.addEventListener('click', () => {
+        document.getElementById('confirmTitle').textContent = 'Reload Sample Leads?';
+        document.getElementById('confirmMessage').textContent = 'This will reset your tracker back to the default corporate training demo prospects. Proceed?';
+
+        pendingConfirmAction = () => {
+          leads = JSON.parse(JSON.stringify(SAMPLE_LEADS));
+          persistLeads(true);
+          resetAllFilters();
+          showToast('Sample corporate outreach data loaded');
+        };
+
+        if (confirmDialog) confirmDialog.classList.remove('hidden');
+      });
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (leadModal && !leadModal.classList.contains('hidden')) closeLeadModal();
+        if (quickNotesModal && !quickNotesModal.classList.contains('hidden')) closeQuickNotes();
+        if (emailDigestModal && !emailDigestModal.classList.contains('hidden')) closeEmailDigestModal();
+        if (importModal && !importModal.classList.contains('hidden')) closeImportModal();
+        if (sheetsModal && !sheetsModal.classList.contains('hidden')) closeSheetsModal();
+        if (confirmDialog && !confirmDialog.classList.contains('hidden')) {
+          confirmDialog.classList.add('hidden');
+          pendingConfirmAction = null;
+        }
+      }
+      if ((e.key === 'n' || e.key === 'N') && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
+        e.preventDefault();
+        openAddLeadModal();
+      }
+      if (e.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
+        e.preventDefault();
+        if (searchInput) searchInput.focus();
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadMasterConfig();
+      attachMasterFormHandlers();
+      loadSheetsConfig();
+      loadLeads();
+    });
+  </script>
+</body>
+</html>
